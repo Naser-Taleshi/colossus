@@ -29,9 +29,9 @@ main{position:absolute;left:24px;right:24px;top:92px;bottom:34px}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 #empty{font:400 18px/1.5 var(--f-body);color:var(--dim)}
 #race{position:absolute;inset:0;display:none}
-.hd{position:absolute;left:0;right:0;top:0;height:22px;display:grid;grid-template-columns:44px minmax(150px,19vw) 1fr 74px 92px;gap:12px;font:600 11px/22px var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.hd{position:absolute;left:0;right:0;top:0;height:22px;display:grid;grid-template-columns:44px minmax(150px,19vw) 1fr 64px 64px 92px;gap:12px;font:600 11px/22px var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
 .pips{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hd .pips span{text-align:center}
-.row{position:absolute;left:0;right:0;display:grid;grid-template-columns:44px minmax(150px,19vw) 1fr 74px 92px;gap:12px;align-items:center;background:var(--panel);border-radius:5px;padding:0 10px 0 0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s;will-change:transform;cursor:pointer}
+.row{position:absolute;left:0;right:0;display:grid;grid-template-columns:44px minmax(150px,19vw) 1fr 64px 64px 92px;gap:12px;align-items:center;background:var(--panel);border-radius:5px;padding:0 10px 0 0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s;will-change:transform;cursor:pointer}
 .row .rk{font:600 18px/1 var(--f-mono);text-align:right;color:var(--dim)}
 .row .nm{font:900 clamp(14px,1.55vw,20px)/1 var(--f-carve);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .pips i{display:block;height:58%;min-height:10px;border-radius:2px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(231,199,126,.2);transition:background .4s,box-shadow .4s}
@@ -58,7 +58,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
 </header>
 <main>
  <div id="lobby"><div class="join"><div id="qr"></div><div class="u" id="ju"></div><div class="c">Room code<b id="jc"></b></div></div><div id="names"><div id="empty">Group names appear here as they join. Click a name to hide it.</div></div></div>
- <div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Time</span></div></div>
+ <div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Hints</span><span style="text-align:right">Time</span></div></div>
  <div id="debrief"><div class="dbl" id="dbl"></div><div class="ask" id="ask"></div></div>
 </main>
 <footer><span id="fl"></span><span id="fr"><button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="fresh" type="button">New room</button></span></footer>
@@ -86,7 +86,7 @@ function apply(ev,merge){
 const serverNow=()=>Date.now()+offset;
 function groups(){const T=D.teams||{};return Object.keys(T).map(k=>{const t=T[k]||{},ds=Object.values(t.d||{}).filter(d=>d&&typeof d==='object');let b=null;
     for(const d of ds){const nd=d.done||0,nb=b&&(b.done||0);if(!b||nd>nb||(nd===nb&&((d.n||0)>(b.n||0)||((d.n||0)===(b.n||0)&&(d.pa||9e15)<(b.pa||9e15)))))b=d}
-    return Object.assign({},b||{},{k,name:t.hide?'Hidden name':(t.name||'...'),raw:t.name,hide:t.hide,devs:ds.length,last:Math.max(0,...ds.map(d=>d.at||0))})}).filter(g=>g.devs).sort((a,b)=>(b.done||0)-(a.done||0)||(b.n||0)-(a.n||0)||(a.pa||9e15)-(b.pa||9e15)||String(a.name).localeCompare(b.name))}
+    return Object.assign({},b||{},{k,name:t.hide?'Hidden name':(t.name||'...'),raw:t.name,hide:t.hide,devs:ds.length,last:Math.max(0,...ds.map(d=>d.at||0))})}).filter(g=>g.devs).sort((a,b)=>(b.done||0)-(a.done||0)||(b.n||0)-(a.n||0)||((a.pa||9e15)+(a.pen||0)*1000)-((b.pa||9e15)+(b.pen||0)*1000)||String(a.name).localeCompare(b.name))}
 function hideName(g){if(!g||g.hide)return;if(confirm(`Hide the name "${g.raw}" on this screen?`))fetch(url('/teams/'+g.k),{method:'PATCH',body:JSON.stringify({hide:1})})}
 function render(){
   const G=groups(),started=!!(D.meta&&D.meta.startAt),devs=G.reduce((a,g)=>a+g.devs,0);
@@ -96,14 +96,14 @@ function render(){
   if(!started){$('#empty').style.display=G.length?'none':'';G.forEach(g=>{let t=tiles[g.k];if(!t){t=tiles[g.k]=document.createElement('div');t.className='tile';t.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#names').appendChild(t)}t.textContent=g.name;const s=document.createElement('small');s.textContent=g.devs>1?'× '+g.devs:'';t.appendChild(s)});return}
   $('#dbb').hidden=false;if(DB){debrief(G);return}
   const H=$('#race').clientHeight-26,rh=Math.max(20,Math.min(64,H/Math.max(G.length,1))),gap=Math.min(5,rh*.12);
-  G.forEach((g,i)=>{let r=rows[g.k];if(!r){r=rows[g.k]=document.createElement('div');r.innerHTML=`<span class="rk"></span><span class="nm"></span><div class="pips">${WHERE.map(()=>'<i></i>').join('')}</div><span class="tr"></span><span class="tm"></span>`;r.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#race').appendChild(r)}
+  G.forEach((g,i)=>{let r=rows[g.k];if(!r){r=rows[g.k]=document.createElement('div');r.innerHTML=`<span class="rk"></span><span class="nm"></span><div class="pips">${WHERE.map(()=>'<i></i>').join('')}</div><span class="tr"></span><span class="tr"></span><span class="tm"></span>`;r.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#race').appendChild(r)}
     r.className='row'+(g.done?' done':'')+(g.done&&i<3?' g'+(i+1):'')+(!g.done&&serverNow()-(g.last||0)>45000?' off':'');r.style.height=(rh-gap)+'px';r.style.transform=`translateY(${26+i*rh}px)`;
     r.children[0].textContent=i+1;r.children[1].textContent=g.name;[...r.children[2].children].forEach((p,k)=>{const n=g.n||0;p.className=k<n?'on':k===n&&!g.done?'now':''});
-    r.children[3].textContent=g.wrong||0;r.children[4].textContent=fmt(((g.done?g.pa:Math.max(g.pa||0,serverNow()))-D.meta.startAt)/1000)});
+    r.children[3].textContent=g.wrong||0;r.children[4].textContent=g.pen?'+'+Math.round(g.pen/60)+' min':'';r.children[5].textContent=fmt(((g.done?g.pa:Math.max(g.pa||0,serverNow()))-D.meta.startAt)/1000+(g.pen||0))});
 }
 let DB=false;
-function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{const s=g.st||{};n+=(s.wrong&&s.wrong[id])||0;if(s.help&&s.help[id])h++});return {id,w,sl,q,n,h,s:n+h*3}}),mx=Math.max(1,...R.map(r=>r.s)),top=R.reduce((a,b)=>b.s>a.s?b:a,R[0]);
-  $('#dbl').innerHTML=R.map(r=>`<div class="dbr ${r===top&&top.s?'top':''}"><div><b>${r.w}</b><small>${r.sl}</small></div><div class="bar"><i style="width:${Math.round(100*r.s/mx)}%"></i></div><span>${r.n}<small> wrong<br>${r.h} used working</small></span></div>`).join('');
+function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{const s=g.st||{},t=s.hint||{};n+=(s.wrong&&s.wrong[id])||0;Object.keys(t).forEach(k=>{if(k.startsWith(id+'_'))h+=t[k]})});return {id,w,sl,q,n,h,s:n+h*2}}),mx=Math.max(1,...R.map(r=>r.s)),top=R.reduce((a,b)=>b.s>a.s?b:a,R[0]);
+  $('#dbl').innerHTML=R.map(r=>`<div class="dbr ${r===top&&top.s?'top':''}"><div><b>${r.w}</b><small>${r.sl}</small></div><div class="bar"><i style="width:${Math.round(100*r.s/mx)}%"></i></div><span>${r.n}<small> wrong<br>${r.h} hints</small></span></div>`).join('');
   $('#ask').innerHTML=`<h3>${top.s?'Ask the room about the '+top.w:'No wrong tries yet'}</h3><p>${top.q}</p><small>Lecture slide: ${top.sl}</small>`}
 $('#dbb').onclick=()=>{DB=!DB;$('#dbb').textContent=DB?'Leaderboard':'Debrief';$('#race').style.visibility=DB?'hidden':'';$('#debrief').style.display=DB?'grid':'none';render()};
 setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt(LIMIT-(end-m.startAt)/1000);render()}
