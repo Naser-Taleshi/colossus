@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colossus Leaderboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{--night:#07110f;--panel:#141b18;--raise:#1f2925;--line:#3b4a43;--fg:#f1ece0;--dim:#b6b5a4;--gold:#e3b04b;--jade:#3fd0b6;--grn:#57d69a;--red:#ff7a66;
+ --f-carve:'Cinzel','Times New Roman',serif;--f-body:'IBM Plex Sans',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:radial-gradient(ellipse at 50% -10%,#16302b 0,#07110f 62%);color:var(--fg);font-family:var(--f-body);overflow:hidden}
+header{display:flex;align-items:center;gap:26px;padding:14px 24px;border-bottom:1px solid var(--line)}
+.brand{font:900 26px/1.1 var(--f-carve);letter-spacing:.04em}.brand small{display:block;font:500 12.5px/1.5 var(--f-body);letter-spacing:.05em;color:var(--dim)}
+#code{font:600 13px/1.2 var(--f-mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase}#code b{display:block;font-size:30px;color:var(--gold);letter-spacing:.14em}
+#count{font:600 15px/1.2 var(--f-mono);color:var(--jade)}
+.sp{flex:1}
+#clock{font:600 44px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+#start{appearance:none;border:0;border-radius:6px;background:var(--gold);color:#17120a;font:900 19px/1 var(--f-carve);padding:15px 22px;cursor:pointer}
+#start:disabled{opacity:.4;cursor:default}
+main{position:absolute;left:24px;right:24px;top:92px;bottom:34px}
+#lobby{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:12px}
+.tile{display:flex;align-items:center;justify-content:center;background:var(--panel);border:1.5px solid var(--line);border-radius:8px;font:900 clamp(20px,3.2vw,40px)/1 var(--f-carve);color:#4a544e;transition:background .35s,color .35s,border-color .35s}
+.tile.in{background:#1c3a31;border-color:var(--grn);color:var(--fg)}
+#race{position:absolute;inset:0;display:none}
+.hd{position:absolute;left:0;right:0;top:0;height:22px;display:grid;grid-template-columns:44px 132px 1fr 96px 92px;gap:12px;font:600 11px/22px var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.pips{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hd .pips span{text-align:center}
+.row{position:absolute;left:0;right:0;display:grid;grid-template-columns:44px 132px 1fr 96px 92px;gap:12px;align-items:center;background:var(--panel);border-radius:5px;padding:0 10px 0 0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s;will-change:transform}
+.row .rk{font:600 18px/1 var(--f-mono);text-align:right;color:var(--dim)}
+.row .nm{font:900 clamp(15px,1.7vw,21px)/1 var(--f-carve);white-space:nowrap}
+.row .pips i{display:block;height:58%;min-height:10px;border-radius:3px;background:#27312c;transition:background .4s,box-shadow .4s}
+.row .pips{height:100%;align-items:center}
+.row .pips i.on{background:var(--grn)}.row .pips i.now{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.row .tr{font:400 14px/1 var(--f-mono);color:var(--dim);text-align:right}.row .tm{font:600 17px/1 var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.row.done{background:#1c3a31}.row.g1{box-shadow:inset 4px 0 0 var(--gold)}.row.g2{box-shadow:inset 4px 0 0 #cfd6da}.row.g3{box-shadow:inset 4px 0 0 #c98a55}
+.row.off{opacity:.5}
+footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(--f-mono);color:var(--dim);display:flex;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){.row{transition:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">Climb the Colossus<small>ESS3805 · Dr Naser Taleshi</small></div>
+ <div id="code">Room<b id="rc"></b></div><div id="count"></div><div class="sp"></div>
+ <button id="start" type="button">Start the climb</button><div id="clock">15:00</div>
+</header>
+<main><div id="lobby"></div><div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Time</span></div></div></main>
+<footer><span id="fl"></span><span id="fr"></span></footer>
+<script>
+const qs=new URLSearchParams(location.search),ROOM=(qs.get('room')||'TEST').toUpperCase(),BASE=qs.get('db')||'',N=20,LIMIT=900,TEST=qs.has('test'),WHERE=['Toe','Foot','Ankle','Shank','Knee','Thigh','Hip'];
+const $=s=>document.querySelector(s),url=p=>`${BASE}/sessions/${ROOM}${p}.json`,gk=g=>'g'+String(g).padStart(2,'0');
+let D={meta:null,teams:{}},offset=0,queued=false;const rows={},lat=[];
+$('#rc').textContent=ROOM;$('#hp').innerHTML=WHERE.map(w=>`<span>${w}</span>`).join('');
+for(let g=1;g<=N;g++){const t=document.createElement('div');t.className='tile';t.id='t'+g;t.textContent='Group '+g;$('#lobby').appendChild(t)}
+const fmt=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function apply(ev,merge){
+  const seg=ev.path.split('/').filter(Boolean);
+  if(!seg.length){if(merge)Object.assign(D,ev.data);else D=Object.assign({meta:null,teams:{}},ev.data||{})}
+  else{let n=D;for(const s of seg.slice(0,-1)){if(!n[s]||typeof n[s]!=='object')n[s]={};n=n[s]}const k=seg[seg.length-1];if(merge){if(!n[k]||typeof n[k]!=='object')n[k]={};Object.assign(n[k],ev.data)}else n[k]=ev.data}
+  if(ev.data&&ev.data.ts){const l=Date.now()-ev.data.ts;if(l>=0&&l<60000)lat.push(l)}
+  if(!queued){queued=true;setTimeout(()=>{queued=false;render()},60)}
+}
+const serverNow=()=>Date.now()+offset;
+function ranked(){const T=D.teams||{};return Object.keys(T).map(k=>T[k]).filter(t=>t&&t.g).sort((a,b)=>(b.done||0)-(a.done||0)||(b.n||0)-(a.n||0)||(a.pa||9e15)-(b.pa||9e15)||a.g-b.g)}
+function render(){
+  const T=ranked(),started=!!(D.meta&&D.meta.startAt);
+  $('#count').textContent=started?`${T.filter(t=>t.done).length} of ${T.length} groups out`:`${T.length} of ${N} groups in`;
+  $('#start').style.display=started?'none':'';$('#start').disabled=!T.length;
+  $('#lobby').style.display=started?'none':'grid';$('#race').style.display=started?'block':'none';
+  for(let g=1;g<=N;g++)$('#t'+g).classList.toggle('in',T.some(t=>t.g===g));
+  if(!started)return;
+  const H=$('#race').clientHeight-26,rh=Math.max(26,Math.min(64,H/Math.max(T.length,1))),gap=Math.min(5,rh*.12);
+  T.forEach((t,i)=>{let r=rows[t.g];if(!r){r=rows[t.g]=document.createElement('div');r.innerHTML=`<span class="rk"></span><span class="nm">Group ${t.g}</span><div class="pips">${WHERE.map(()=>'<i></i>').join('')}</div><span class="tr"></span><span class="tm"></span>`;$('#race').appendChild(r)}
+    r.className='row'+(t.done?' done':'')+(t.done&&i<3?' g'+(i+1):'')+(!t.done&&serverNow()-(t.at||0)>45000?' off':'');r.style.height=(rh-gap)+'px';r.style.transform=`translateY(${26+i*rh}px)`;
+    r.children[0].textContent=i+1;const s=t.st&&t.st.solved||{};[...r.children[2].children].forEach((p,k)=>{const n=t.n||0;p.className=k<n?'on':k===n&&!t.done?'now':''});
+    r.children[3].textContent=t.wrong||0;r.children[4].textContent=fmt(((t.done?t.pa:Math.max(t.pa||0,serverNow()))-D.meta.startAt)/1000)});
+}
+setInterval(()=>{const m=D.meta;if(m&&m.startAt){const T=ranked(),end=T.length&&T.every(t=>t.done)?Math.max(...T.map(t=>t.pa||0)):serverNow();$('#clock').textContent=fmt(LIMIT-(end-m.startAt)/1000);render()}
+  if(TEST&&lat.length){const a=[...lat].sort((x,y)=>x-y);$('#fl').textContent=`Test: ${a.length} updates, delay median ${a[a.length>>1]} ms, slowest ${a[a.length-1]} ms`}},500);
+$('#start').onclick=()=>fetch(url('/meta'),{method:'PATCH',body:JSON.stringify({startAt:{'.sv':'timestamp'}})});
+window.__lat=()=>{const a=[...lat].sort((x,y)=>x-y);return {n:a.length,median:a[a.length>>1]||0,p95:a[Math.floor(a.length*.95)]||0,max:a[a.length-1]||0}};
+if(TEST)setInterval(()=>{if(lat.length)fetch(`/sessions/${ROOM}/boardstats.json`,{method:'PUT',body:JSON.stringify(window.__lat())})},5000);
+(async()=>{try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}
+ const r=await fetch(url('/meta')),m=await r.json();if(!m)await fetch(url('/meta'),{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});
+ const es=new EventSource(url(''));es.addEventListener('put',e=>apply(JSON.parse(e.data),false));es.addEventListener('patch',e=>apply(JSON.parse(e.data),true));if(qs.has('once'))setTimeout(()=>fetch(url('/clockcheck'),{method:'PUT',body:JSON.stringify({clock:$('#clock').textContent})}),2500)})();
+</script>
+</body>
+</html>
