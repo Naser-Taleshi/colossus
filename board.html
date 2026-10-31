@@ -82,7 +82,7 @@ function groups(){const T=D.teams||{};return Object.keys(T).map(k=>{const t=T[k]
 function hideName(g){if(!g||g.hide)return;if(confirm(`Hide the name "${g.raw}" on this screen?`))fetch(url('/teams/'+g.k),{method:'PATCH',body:JSON.stringify({hide:1})})}
 function render(){
   const G=groups(),started=!!(D.meta&&D.meta.startAt),devs=G.reduce((a,g)=>a+g.devs,0);
-  $('#count').textContent=started?`${G.filter(g=>g.done).length} of ${G.length} groups out`:`${G.length} groups in · ${devs} devices`;
+  $('#count').textContent=started?`${G.filter(g=>g.done).length} of ${G.length} groups out`:`${G.length} ${G.length===1?'group':'groups'} in · ${devs} ${devs===1?'device':'devices'}`;
   $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';
   $('#lobby').style.display=started?'none':'grid';$('#race').style.display=started?'block':'none';
   if(!started){$('#empty').style.display=G.length?'none':'';G.forEach(g=>{let t=tiles[g.k];if(!t){t=tiles[g.k]=document.createElement('div');t.className='tile';t.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#names').appendChild(t)}t.textContent=g.name;const s=document.createElement('small');s.textContent=g.devs>1?'× '+g.devs:'';t.appendChild(s)});return}

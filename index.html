@@ -229,7 +229,8 @@ async function liveJoin(){
   LIVE.k=slotFor(LIVE.name,d.teams);const t=d.teams&&d.teams[LIVE.k],best=bestDevice(t);
   if(best&&(best.n||0)>0&&best.st){S.solved=best.st.solved||{};S.sub=best.st.sub||{};S.wrong=best.st.wrong||{};S.help=best.st.help||{};S.lv=best.lv||0;if(best.t0)S.t0=best.t0;LIVE.n=best.n}
   S.team=LIVE.name;S.live={room:LIVE.room,k:LIVE.k,name:LIVE.name,dev:LIVE.dev};
-  try{const r=await api('/teams/'+LIVE.k,{method:'PATCH',body:JSON.stringify({name:LIVE.name,at:SV})});if(!r.ok)throw 0;
+  if(t&&t.name)LIVE.name=t.name;S.team=LIVE.name;S.live.name=LIVE.name;
+  try{if(!t||!t.name){const r=await api('/teams/'+LIVE.k,{method:'PATCH',body:JSON.stringify({name:LIVE.name,at:SV})});if(!r.ok)throw 0}
     const r2=await api('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify(Object.assign(liveState(),{at:SV,ts:Date.now()}))});if(!r2.ok)throw 0}
   catch(e){b.disabled=false;jnote('Could not join. Try again, or play on your own.');return}
   LIVE.joinMs=Math.round(performance.now()-t0);liveBeat();liveLobby(d.meta)}
