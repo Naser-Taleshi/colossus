@@ -353,6 +353,8 @@ const LIVE={url:'https://colossus-ess3805-default-rtdb.europe-west1.firebasedata
 const SV={'.sv':'timestamp'};
 const api=(p,o,ms=8000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(LIVE.url+'/sessions/'+LIVE.room+p+'.json',Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))};
 async function apiR(p,o,n=4){let e;for(let i=0;i<n;i++){try{const r=await api(p,o,5000);if(r.ok)return r;e=new Error('refused')}catch(x){e=x}if(i<n-1)jnote('Still connecting...')}throw e}
+const nextOf=async code=>{try{const r=await fetch(LIVE.url+'/sessions/'+code+'/clock.json');if(!r.ok)return null;const c=await r.json();return c&&c.next||code}catch(e){return null}};
+function liveWatch(){if(LIVE.wt)return;LIVE.wt=setInterval(async()=>{if(!LIVE.room||document.hidden)return;const code=LIVE.home||LIVE.room,n=await nextOf(code);if(n&&n!==LIVE.room){clearInterval(LIVE.wt);S=fresh();save();location.href=location.pathname+'?room='+encodeURIComponent(code)}},7000+Math.random()*3000)}
 const tidyName=s=>String(s||'').trim().replace(/\s+/g,' ').slice(0,20);
 const nameKey=s=>tidyName(s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const RUDE=/fuck|shit|cunt|nigg|wank|twat|bitch|(^|[^a-z])(dick|cock|arse|piss|fag)([^a-z]|$)/i;
@@ -366,21 +368,21 @@ async function livePush(){if(LIVE.busy)return;LIVE.busy=true;
       if(s.n!==LIVE.n)b.pa=SV;const r=await api('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify(b)});if(!r.ok)throw new Error('write');LIVE.sent=k;LIVE.n=s.n;LIVE.writes++}}
   catch(e){LIVE.fails++;clearTimeout(LIVE.retry);LIVE.retry=setTimeout(livePush,3000)}
   LIVE.busy=false}
-function liveResume(){const l=S.live;if(!l)return;LIVE.room=l.room;LIVE.k=l.k;LIVE.name=l.name;LIVE.dev=l.dev;LIVE.n=Object.keys(S.solved).length;liveSync();liveBeat()}
-function liveBeat(){if(LIVE.beat)return;LIVE.beat=setInterval(()=>{if(LIVE.room&&S.started&&!S.closed&&!document.hidden)api('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify({at:SV})}).catch(()=>{})},20000)}
+function liveResume(){const l=S.live;if(!l)return;LIVE.room=l.room;LIVE.home=l.home||l.room;LIVE.k=l.k;LIVE.name=l.name;LIVE.dev=l.dev;LIVE.n=Object.keys(S.solved).length;liveSync();liveBeat()}
+function liveBeat(){liveWatch();if(LIVE.beat)return;LIVE.beat=setInterval(()=>{if(LIVE.room&&S.started&&!S.closed&&!document.hidden)api('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify({at:SV})}).catch(()=>{})},20000)}
 const jnote=m=>{const n=$('#jn');if(n)n.textContent=m};
-async function liveChips(){const c=$('#chips');LIVE.room=($('#room').value||'').trim().toUpperCase();if(!c||LIVE.room.length<4)return;try{const r=await api('/teams');if(!r.ok)return;const T=await r.json();if(!T)return;c.textContent='';Object.values(T).filter(t=>t&&t.name&&!t.hide).forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t.name;b.onclick=()=>{$('#gname').value=t.name};c.appendChild(b)});c.previousElementSibling.hidden=!c.children.length}catch(e){}}
+async function liveChips(){const c=$('#chips');LIVE.room=($('#room').value||'').trim().toUpperCase();if(!c||LIVE.room.length<4)return;LIVE.room=(await nextOf(LIVE.room))||LIVE.room;try{const r=await api('/teams');if(!r.ok)return;const T=await r.json();if(!T)return;c.textContent='';Object.values(T).filter(t=>t&&t.name&&!t.hide).forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t.name;b.onclick=()=>{$('#gname').value=t.name};c.appendChild(b)});c.previousElementSibling.hidden=!c.children.length}catch(e){}}
 async function liveJoin(){
   const t0=performance.now();LIVE.room=($('#room').value||'').trim().toUpperCase();LIVE.name=tidyName($('#gname').value);soundOn=$('#snd').checked;LIVE.dev=devId();
   if(!LIVE.room){jnote('Enter the room code from the screen.');return}
   if(nameKey(LIVE.name).length<2){jnote('Choose a group name of at least two letters.');return}
   if(RUDE.test(LIVE.name)){jnote('Please choose a different name.');return}
-  const b=$('#enter');b.disabled=true;jnote('Joining...');let d;
+  const b=$('#enter');b.disabled=true;jnote('Joining...');let d;LIVE.home=LIVE.room;LIVE.room=(await nextOf(LIVE.home))||LIVE.home;
   try{const r=await apiR('');d=await r.json()}catch(e){b.disabled=false;jnote('Could not reach the leaderboard. Check the Wi-Fi and try again, or play on your own.');return}
   if(!d||!d.meta){b.disabled=false;jnote('That room is not open. Check the code on the screen.');return}
   LIVE.k=slotFor(LIVE.name,d.teams);const t=d.teams&&d.teams[LIVE.k],best=bestDevice(t);
   if(best&&(best.n||0)>0&&best.st){S.solved=best.st.solved||{};S.sub=best.st.sub||{};S.wrong=best.st.wrong||{};S.help=best.st.help||{};S.found=best.st.found||{};S.hint=best.st.hint||{};S.eq=best.st.eq||{};S.pen=best.pen||0;S.lv=best.lv||0;S.seen={};bookSeq().forEach(([k])=>{S.seen[k]=1});if(best.t0)S.t0=best.t0;LIVE.n=best.n}
-  S.team=LIVE.name;S.live={room:LIVE.room,k:LIVE.k,name:LIVE.name,dev:LIVE.dev};
+  S.team=LIVE.name;S.live={room:LIVE.room,home:LIVE.home,k:LIVE.k,name:LIVE.name,dev:LIVE.dev};
   if(t&&t.name)LIVE.name=t.name;S.team=LIVE.name;S.live.name=LIVE.name;
   try{if(!t||!t.name)await apiR('/teams/'+LIVE.k,{method:'PATCH',body:JSON.stringify({name:LIVE.name,at:SV})});
     await apiR('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify(Object.assign(liveState(),{at:SV,ts:Date.now()}))})}
@@ -1059,7 +1061,7 @@ let HOLD=0,SPOTK='',OFFT=0;
 const paperDue=id=>{const k=(PAPER[id]||[])[stage(id)];return k&&!S.found[k]?k:null};
 function thing(){if(!S.started||panel||CL||TW||FIN||S.closed||!SP.length||!W.hot||!$('#bag').hidden||performance.now()<HOLD)return null;const id=LV[S.lv].id;if(S.solved[id])return null;const p=paperDue(id);if(p)return {k:p,v:W.sheets[p].p};if(eqNow()&&S.found.manual)return {k:'book'};return {k:'dev',v:W.hot[S.lv]}}
 function look(v,d){const [a,b]=lookFrom(pos,v);let y=a;while(y-yaw>Math.PI)y-=2*Math.PI;while(y-yaw<-Math.PI)y+=2*Math.PI;TW={p0:pos.clone(),p1:pos.clone(),y0:yaw,y1:y,x0:pitch,x1:b,t:0,d:calm?.15:(d||1.1)}}
-function spotTick(t){if(!W.halo)return;const th=thing(),sp=$('#spot');
+function spotTick(t){if(!W.halo)return;for(const k in W.sheets)W.sheets[k].m.visible=!S.found[k];const th=thing(),sp=$('#spot');
  if(!th){sp.hidden=true;W.halo.visible=false;W.lamp.intensity=0;
   const L=S.lv;if(S.started&&!S.closed&&!panel&&!CL&&!TW&&!FIN&&SP.length&&$('#bag').hidden&&performance.now()>=HOLD&&S.solved[LV[L].id]){if(L<6)climb();else finale()}return}
  const key=th.k+S.lv;if(key!==SPOTK){SPOTK=key;if(th.v){look(th.v);return}}
@@ -1068,7 +1070,7 @@ function spotTick(t){if(!W.halo)return;const th=thing(),sp=$('#spot');
  sp.hidden=!on;sp.style.transform=`translate(${x}px,${y}px)`;W.halo.visible=true;W.halo.position.copy(th.v);W.halo.scale.setScalar(1.05*q);W.lamp.position.copy(th.v).add(new THREE.Vector3(0,.6,.5));W.lamp.intensity=2.4*q;
  if(on)OFFT=performance.now();else if(performance.now()-OFFT>5000&&!drag){OFFT=performance.now();look(th.v)}}
 $('#spot').addEventListener('click',()=>{const th=thing();if(!th)return;beep('snap');if(th.k==='dev')openPanel(LV[S.lv].id);else if(th.v)takeSheet(th.k)});
-function takeSheet(k){S.found[k]=1;W.sheets[k].m.visible=false;save();openBook(bookSeq().findIndex(([q])=>q===PAGE1[k]))}
+function takeSheet(k){S.found[k]=1;save();openBook(bookSeq().findIndex(([q])=>q===PAGE1[k]))}
 function afterLevel(id){const i=LV.findIndex(l=>l.id===id);if(W.eff[i])look(W.eff[i],1);HOLD=performance.now()+(calm?300:id==='film'?3600:3000)}
 function afterStage(id){const i=LV.findIndex(l=>l.id===id);look(id==='film'?W.stopv:W.hot[i],.8);HOLD=performance.now()+(calm?200:id==='film'?4200:1700);if(id==='film')beep('power')}
 /* where the eyes go on each climb: ahead along the path, then to the statue and the temple, then to the next device */

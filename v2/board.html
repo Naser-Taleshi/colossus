@@ -61,7 +61,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
  <div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Hints</span><span style="text-align:right">Time</span></div></div>
  <div id="debrief"><div class="dbl" id="dbl"></div><div class="ask" id="ask"></div></div>
 </main>
-<footer><span id="fl"></span><span id="fr"><button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="fresh" type="button">New room</button></span></footer>
+<footer><span id="fl"></span><span id="fr"><button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="restart" class="fbtn" type="button" hidden>Restart</button> <button id="fresh" type="button">New room</button></span></footer>
 <script src="libs/qrcode.min.js"></script>
 <script>
 const qs=new URLSearchParams(location.search),BASE=qs.get('db')||'https://colossus-ess3805-default-rtdb.europe-west1.firebasedatabase.app',LIMIT=900,TEST=qs.has('test'),WHERE=['Toe','Foot','Ankle','Shank','Knee','Thigh','Hip'];
@@ -70,7 +70,7 @@ const WORDS=['KNEE','FOOT','SHIN','TOES','HEEL','GAIT','STEP','HIPS'];
 const newCode=()=>WORDS[Math.floor(Math.random()*WORDS.length)]+String(10+Math.floor(Math.random()*90));
 let ROOM=(qs.get('room')||'').toUpperCase();
 if(!ROOM){ROOM=newCode();qs.set('room',ROOM);history.replaceState(null,'','?'+qs)}
-const $=s=>document.querySelector(s),url=p=>`${BASE}/sessions/${ROOM}${p}.json`;
+const HOME=ROOM,$=s=>document.querySelector(s),url=p=>`${BASE}/sessions/${ROOM}${p}.json`,home=p=>`${BASE}/sessions/${HOME}${p}.json`;
 const JOIN=new URL('./?room='+ROOM,location.href).href;
 let D={meta:null,teams:{}},offset=0,queued=false;const rows={},tiles={},lat=[];
 $('#rc').textContent=ROOM;$('#jc').textContent=ROOM;$('#ju').textContent=JOIN.replace(/^https?:\/\//,'');$('#hp').innerHTML=WHERE.map(w=>`<span>${w}</span>`).join('');
@@ -91,7 +91,7 @@ function hideName(g){if(!g||g.hide)return;if(confirm(`Hide the name "${g.raw}" o
 function render(){
   const G=groups(),started=!!(D.meta&&D.meta.startAt),devs=G.reduce((a,g)=>a+g.devs,0);
   $('#count').textContent=started?`${G.filter(g=>g.done).length} of ${G.length} groups out`:`${G.length} ${G.length===1?'group':'groups'} in · ${devs} ${devs===1?'device':'devices'}`;
-  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';
+  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';$('#restart').hidden=!started&&!G.length;
   $('#lobby').style.display=started?'none':'grid';$('#race').style.display=started?'block':'none';
   if(!started){$('#empty').style.display=G.length?'none':'';G.forEach(g=>{let t=tiles[g.k];if(!t){t=tiles[g.k]=document.createElement('div');t.className='tile';t.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#names').appendChild(t)}t.textContent=g.name;const s=document.createElement('small');s.textContent=g.devs>1?'× '+g.devs:'';t.appendChild(s)});return}
   $('#dbb').hidden=false;if(DB){debrief(G);return}
@@ -109,9 +109,10 @@ $('#dbb').onclick=()=>{DB=!DB;$('#dbb').textContent=DB?'Leaderboard':'Debrief';$
 setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt(LIMIT-(end-m.startAt)/1000);render()}
   if(TEST&&lat.length){const a=[...lat].sort((x,y)=>x-y);$('#fl').textContent=`Test: ${a.length} updates, delay median ${a[a.length>>1]} ms, slowest ${a[a.length-1]} ms`}},500);
 $('#start').onclick=()=>{$('#start').disabled=true;fetch(url('/meta'),{method:'PATCH',body:JSON.stringify({startAt:{'.sv':'timestamp'}})})};
+$('#restart').onclick=async()=>{if(!confirm('Restart the game? Every group goes back to the opening screen. The room code and QR stay the same.'))return;$('#restart').disabled=true;const C='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=()=>C[Math.floor(Math.random()*C.length)],nx=HOME.slice(0,4).padEnd(4,'X')+r()+r();await fetch(`${BASE}/sessions/${nx}/meta.json`,{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});await fetch(home('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'},next:nx})});location.reload()};
 $('#fresh').onclick=()=>{if(confirm('Open a new empty room? Use this if you need to run the game again.')){qs.set('room',newCode());location.search=qs}};
 window.__lat=()=>{const a=[...lat].sort((x,y)=>x-y);return {n:a.length,median:a[a.length>>1]||0,p95:a[Math.floor(a.length*.95)]||0,max:a[a.length-1]||0}};
-(async()=>{try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}
+(async()=>{try{const c=await (await fetch(home('/clock'))).json();if(c&&c.next)ROOM=c.next}catch(e){}try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}
  const r=await fetch(url('/meta')),m=await r.json();if(!m)await fetch(url('/meta'),{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});
  const es=new EventSource(url(''));es.addEventListener('put',e=>apply(JSON.parse(e.data),false));es.addEventListener('patch',e=>apply(JSON.parse(e.data),true))})();
 </script>
