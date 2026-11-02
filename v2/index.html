@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Climb the Colossus</title>
+<title>Project Vitruvius</title>
 <style>
 /* Layout: full-screen 3D, one vertical climb. An altimeter on the right edge replaces any room map, and rising water fills it.
    Palette: deep jade water, carved stone, temple gold, with slide 31's red and green kept for right and wrong. */
@@ -289,7 +289,7 @@ th,td{border-bottom-color:var(--line)}th{color:var(--dim);font-size:14px}table{f
 
 <canvas id="c" aria-label="A flooded temple with a giant stone runner, a 3D scene"></canvas>
 <div id="vig"></div>
-<div class="bar"><div class="brand">Climb the Colossus<small id="lvname"></small></div><div class="clk" id="clock">15:00</div></div>
+<div class="bar"><div class="brand">Project Vitruvius<small id="lvname"></small></div><div class="clk" id="clock">15:00</div></div>
 <button id="papers" hidden>Lab<br>manual</button>
 <div id="alt" aria-hidden="true"><div id="aw"></div></div>
 <div id="toast" role="status"></div>
@@ -422,8 +422,8 @@ const LEARN={sheet:'The force plate and the cameras give the GRF, the CoP and th
 const EQ={
  com_0:{id:'com',page:'plate',lines:[['Y = −0.0966 + ',{a:.433,s:'0.433',t:.0006,tr:[[.5,'0.500 is the foot. Use the thigh row of the table.'],[.1,'That is not on this table. Use the thigh row of the fractions.']]},' × ( ',{a:.0614,s:'0.0614',t:.0006,tr:[[-.0966,'That is the hip. This blank is the distal end, the knee.'],[.4416,'That is the knee\'s Z. This line is for Y.']]},' − (−0.0966) )'],['Z = ',{a:.8221,s:'0.8221',t:.0006,tr:[[.4416,'That is the knee. The sum starts at the proximal end, the hip.'],[-.0966,'That is the hip\'s Y. This line is for Z.']]},' + 0.433 × ( 0.4416 − 0.8221 )']],
   done:['Knee − Hip: Y 0.1580, Z −0.3805','Y = −0.0966 + 0.433 × 0.1580 = −0.0282','Z = 0.8221 + 0.433 × (−0.3805) = 0.6573'],hint:'Copy the shank on the page before. The fraction comes from the thigh row of the hanging room table. The hip and knee marks are on this photograph. Y goes with Y, and Z goes with Z.',work:['Y = −0.0966 + 0.433 × ( 0.0614 − (−0.0966) )','Z = 0.8221 + 0.433 × ( 0.4416 − 0.8221 )']},
- film_0:{id:'film',page:'film',then:'set a on the drum\'s brake, and it will stop',lines:[['a = ( ',{a:-.0788,s:'−0.0788',t:.0006,tr:[[.0188,'That is the frame after. This blank is the frame before.'],[-.0282,'That is the frame itself. This blank is the frame before it.'],[-.1352,'That is two frames back. Use the frame right next to it.']]},' − 2 × ',{a:-.0282,s:'−0.0282',t:.0006,tr:[[-.0788,'That is the frame before. This blank is the frame itself.'],[.0188,'That is the frame after. This blank is the frame itself.'],[.6573,'That is Z. The film gives Y.']]},],['+ ',{a:.0188,s:'0.0188',t:.0006,tr:[[-.0788,'That is the frame before. This blank is the frame after.'],[.0643,'That is two frames on. Use the frame right next to it.'],[-.0282,'That is the frame itself. This blank is the frame after it.']]},' ) ÷ ',{a:.02,s:'0.02',t:.0004,tr:[[50,'50 is frames every second. Δt is the time from one frame to the next, 1 ÷ 50.'],[1,'Δt is the time from one frame to the next, 1 ÷ 50.']]},'²']],
-  done:['a = −0.0036 ÷ 0.0004 = −9.0 m/s²'],hint:'The frame is the one whose Y equals the thigh\'s CoM Y, on page 5. The first blank is the frame just before it, the second is that frame, the third is the frame just after it, and Δt is 1 ÷ 50.',work:['a = ( −0.0788 − 2 × (−0.0282) + 0.0188 ) ÷ 0.02²']},
+ film_0:{id:'film',page:'film',then:'set a on the drum\'s brake, and it will stop',lines:[['a = ( ',{a:-.0788,s:'−0.0788',t:.0006,tr:[[.0188,'That is the frame after. This blank is the frame before.'],[-.0282,'That is the frame itself. This blank is the frame before it.'],[-.1352,'That is two frames back. Use the frame right next to it.']]},' − 2 × ',{a:-.0282,s:'−0.0282',t:.0006,tr:[[-.0788,'That is the frame before. This blank is the frame itself.'],[.0188,'That is the frame after. This blank is the frame itself.'],[.6573,'That is Z. The film gives Y.']]},],['+ ',{a:.0188,s:'0.0188',t:.0006,tr:[[-.0788,'That is the frame before. This blank is the frame after.'],[.0643,'That is two frames on. Use the frame right next to it.'],[-.0282,'That is the frame itself. This blank is the frame after it.']]},' ) ÷ ',{a:.02,s:'0.02',t:.0004,tr:[[50,'50 is frames every second. t is the time from one frame to the next, 1 ÷ 50.'],[1,'t is the time from one frame to the next, 1 ÷ 50.']]},'²']],
+  done:['a = −0.0036 ÷ 0.0004 = −9.0 m/s²'],hint:'The frame is the one whose Y equals the thigh\'s CoM Y, on page 5. The first blank is the frame just before it, the second is that frame, the third is the frame just after it, and t is 1 ÷ 50.',work:['a = ( −0.0788 − 2 × (−0.0282) + 0.0188 ) ÷ 0.02²']},
  dial_0:{id:'dial',page:'angle2',then:'swing the brass dial to this angle',lines:[['v<sub>1</sub>:  Y = ',{a:.158,s:'0.1580',t:.0006,tr:[[-.3805,'That is the Z of v₁. This blank is its Y.'],[.0614,'That is the knee alone. v₁ is Knee − Hip.'],[-.0966,'That is the hip alone. v₁ is Knee − Hip.'],[-.158,'Keep the order: Knee − Hip.']]},'  Z = ',{a:-.3805,s:'−0.3805',t:.0006,tr:[[.158,'That is the Y of v₁. This blank is its Z.'],[.3805,'Keep the sign: the knee is below the hip.'],[.4416,'That is the knee alone. v₁ is Knee − Hip.'],[.8221,'That is the hip alone. v₁ is Knee − Hip.']]}],['v<sub>2</sub>:  Y = ',{a:-1,s:'−1',t:.0006,tr:[[1,'vRef points back along the path, so its Y is negative.'],[0,'That is its Z. This blank is its Y.']]},'  Z = ',{a:0,s:'0',t:.0006,tr:[[-1,'That is its Y. This blank is its Z.'],[1,'vRef lies flat, so it has no Z.']]}]],
   done:['θ = cos<sup>−1</sup> ( … ) = 112.6° = 1.9644 rad','Length of the thigh, |v<sub>1</sub>| = 0.4120 m'],hint:'v₁ is Knee − Hip. Both numbers are at the top of the thigh\'s sum, on page 5. v₂ is vRef, on the page opposite.',work:['v₁: Y = 0.1580, Z = −0.3805','v₂: Y = −1, Z = 0']},
  dial_2:{id:'dial',page:'alpha',then:'set α on the lock at the dial',lines:[['α = ( 2.0457 − 2 × ',{a:1.9644,s:'1.9644',t:.0006,tr:[[112.6,'The sum takes radians, not degrees. The angle page gives θ in radians too.'],[2.0457,'That is frame 4, already in the sum. The middle is frame 5.'],[1.8641,'That is frame 6. The middle is frame 5.']]}],['+ ',{a:1.8641,s:'1.8641',t:.0006,tr:[[2.0457,'That is frame 4, the frame before. This blank is the frame after.'],[1.9644,'That is frame 5. This blank is the frame after.']]},' ) ÷ 0.02²']],
@@ -457,51 +457,51 @@ const Q={
    hint:'Look at how the shank was worked, and do the same for the thigh. Which mark is the proximal end, and which row of the table do you need?',
    work:['Thigh vector = Knee − Hip = (0.1580, −0.3805) m','CoM Y = −0.0966 + 0.433 × 0.1580 = −0.0282 m','CoM Z = 0.8221 + 0.433 × (−0.3805) = 0.6573 m'],
    right:'The thigh\'s centre of mass: (−0.0282, 0.6573) m. "Take a note of that," the Professor kept saying. "You will need it."'}],
- film:[{ans:-9,tol:.11,
+ film:[{ans:-9,tol:.04,
    traps:[[9,.11,'The size is right. Check the sign: x<sub>i−1</sub> − 2x<sub>i</sub> + x<sub>i+1</sub>, keeping every minus sign.'],
     [2.4,.11,'That is velocity, the first derivative. Acceleration is the second derivative.'],
     [4.9,.11,'That is a first derivative too. Acceleration uses all three frames and the 2 in the middle.'],
-    [-.2,.11,'You divided by Δt. The formula divides by (Δt)².'],
-    [0,.05,'If your answer is too small for the wheels, you have not divided by (Δt)² yet.']],
+    [-.2,.11,'You divided by t. The sum divides by t².'],
+    [0,.05,'If your answer is too small for the wheels, you have not divided by t² yet.']],
    hint:'The answer on your sum in the manual is the figure the brake wants, sign included.',
-   work:['Top line: −0.0788 − 2(−0.0282) + 0.0188 = −0.0036 m','(Δt)² = 0.02² = 0.0004 s²','a = −0.0036 ÷ 0.0004 = −9.0 m/s²'],
+   work:['Top line: −0.0788 − 2(−0.0282) + 0.0188 = −0.0036 m','t² = 0.02² = 0.0004 s²','a = −0.0036 ÷ 0.0004 = −9.0 m/s²'],
    right:'a = −9.0 m/s². The brake bites.'},
   {pick:[1,2,3],
    hint:'Frame 1 has no frame before it, so it can only look forwards.',
    work:['Frame 1 has nothing before it, so it looks forwards: frames 1, 2 and 3.'],
    right:'Frame 1 looks forwards, the last frame looks backwards, and every frame between uses the central difference.'}],
- dial:[{ans:112.6,tol:1.5,
+ dial:[{ans:112.6,tol:.04,
    traps:[[67.4,2,'You lost the minus sign of v₂. That gives an angle below 90°.'],
     [22.6,1.5,'That is the angle from straight down. Measure from vRef, the dashed arrow.']],
-   hint:'The needle goes past straight down. The angle is on the page you just finished.',
+   hint:'The needle goes past straight down. Use the fine buttons to reach the exact angle on the page you just finished.',
    work:['v₁ = (0.1580, −0.3805) and v₂ = (−1, 0)','θ = 112.6°'],
    right:'θ = 112.6°. "Note the radians and the length as well," the Professor would say. "You will need both."'},
   {opts:[['Toe behind the ankle',null],['Toe in front of the ankle','That is the plus case on the slide.']],ok:0,
    hint:'The slide says: + toe in front of the ankle.',
    work:['cos⁻¹ only gives the size of the angle, so the foot\'s sign comes from where the toe is.','Toe behind the ankle: minus.'],
    right:'Right. The thigh needs no sign, but the foot does, because cos⁻¹ only gives the size of the angle.'},
-  {ans:-47.5,tol:1.6,
+  {ans:-47.5,tol:.04,
    traps:[[47.5,1.6,'The size is right. Check the sign, keeping every minus sign.'],
-    [-.019,.004,'That is the top line. Now divide by (Δt)².'],
-    [-.95,.05,'You divided by Δt. The formula divides by (Δt)².']],
+    [-.019,.004,'That is the top line. Now divide by t².'],
+    [-.95,.05,'You divided by t. The sum divides by t².']],
    hint:'The answer on your sum in the manual is the figure the lock wants, sign included.',
-   work:['Top line: 2.0457 − 2(1.9644) + 1.8641 = −0.0190 rad','(Δt)² = 0.0004 s²','α = −0.0190 ÷ 0.0004 = −47.5 rad/s²'],
+   work:['Top line: 2.0457 − 2(1.9644) + 1.8641 = −0.0190 rad','t² = 0.0004 s²','α = −0.0190 ÷ 0.0004 = −47.5 rad/s²'],
    right:'α = −47.5 rad/s². The same central difference as the film, on the angle this time.'}],
- scale:[{ans:6.57,tol:.012,
+ scale:[{ans:6.57,tol:.004,
    traps:[[3.05,.03,'That is the shank. The counterweight wants the thigh.'],
     [.95,.03,'That is the foot. The counterweight wants the thigh.'],
     [28.45,.1,'0.433 locates the centre of mass. For mass, use the first column.']],
    hint:'The figure on your sum in the manual is the mass to build from the brass weights.',
    work:['Thigh fraction = 0.1000','m<sub>th</sub> = 0.1 × 65.7 = 6.57 kg'],
    right:'m<sub>th</sub> = 6.57 kg. "Keep that one close," the Professor said. "It comes back at the axes."'}],
- pend:[{ans:.1331,tol:.002,
+ pend:[{ans:.1331,tol:.00004,
    traps:[[.1244,.002,'0.302 is the shank\'s value. Use the Thigh row.'],
     [.1957,.003,'0.475 is the foot\'s value. Use the Thigh row.'],
     [.1784,.003,'0.433 locates the centre of mass. Radius of gyration has its own column.']],
-   hint:'R is a fraction of the length. The figure on your sum in the manual is where the sleeve belongs.',
+   hint:'R is a fraction of the length. The figure on your sum in the manual is where the sleeve belongs: use the fine buttons to reach it exactly.',
    work:['l<sub>th</sub> = 0.4120 m','R<sub>th</sub> = 0.323 × 0.4120 = 0.1331 m'],
    right:'R<sub>th</sub> = 0.1331 m. The two axes fall into step.'},
-  {ans:.1164,tol:.003,
+  {ans:.1164,tol:.00004,
    traps:[[.8745,.008,'You used R, not R squared.'],
     [1.115,.01,'You used the full thigh length. Use R, the radius of gyration.'],
     [.0177,.0008,'That is R squared. Now multiply by the mass.'],
@@ -583,7 +583,7 @@ function fbHTML(id){
   if(live&&seen)h+=`<div class="msg hint"><b>Pencil working</b><ol>${q.work.map(w=>`<li>${w}</li>`).join('')}</ol></div><div class="row"><button type="button" class="btn" data-act="accept">Carry on</button></div>`;
   if(GOON[id])h+=`<div class="row"><button type="button" class="btn" data-act="goon">Carry on</button></div>`;
   if(solved&&TRAIL[id])h+=`<div class="paper trail"><small>${TRAIL[id][0]}</small><div class="hand">${TRAIL[id][1]}</div></div>`;
-  if(solved)h+=`<div class="row"><button type="button" class="btn" data-act="close">${id==='term'?'Wake the Colossus':'Carry on'}</button></div>`;
+  if(solved)h+=`<div class="row"><button type="button" class="btn" data-act="close">${id==='term'?'Wake the giant':'Carry on'}</button></div>`;
   return h;
 }
 function shell(id,body){const E=EQ[HK(id)],then=E&&S.eq[HK(id)]&&!S.solved[id]&&!GOON[id]&&E.then;return `<article class="pan"><div class="tools">${S.found.manual?'<button type="button" class="papers" data-bag="1">Lab manual</button>':''}<button type="button" class="close" data-act="close">Step back</button></div>${NOTE[id]&&!S.solved[id]?`<div class="msg good">${NOTE[id]}</div>`:''}${then?`<div class="paper carry"><div class="hand">${E.then[0].toUpperCase()+E.then.slice(1)}.</div></div>`:''}${body}<div class="fb" id="fb">${fbHTML(id)}</div></article>`}
@@ -594,7 +594,7 @@ function pass(id,msg){S.tries[id]=0;SEEN[id]=false;const nx=stage(id)+1;
  if(nx<Q[id].length){if(PAPER[id]&&PAPER[id][nx]){GOON[id]=1;MSG[id]=['good',msg];beep('good');save();rerender();const f=$('#fb');if(f)f.scrollIntoView({block:'nearest'});return}
   NOTE[id]=msg;MSG[id]=null;S.sub[id]=nx;beep('good');save();rerender();$('#overlay').scrollTop=0;return}
  MSG[id]=['good',msg];solve(id);rerender();const f=$('#fb');if(f&&id!=='term')f.scrollIntoView({block:'nearest'});if(id==='term'){const q=$('.rodp');if(q)q.scrollIntoView({block:'center'});setTimeout(()=>{const e=$('#fb');if(e&&panel==='term')e.scrollIntoView({behavior:calm?'auto':'smooth',block:'end'})},2300)}}
-function numCheck(id,x){const q=QQ(id);if(near(x,q.ans,q.tol)){pass(id,q.right);return}const t=q.traps.find(([v,tol])=>near(x,v,tol));fail(id,t?t[2]:'Not yet. Check each step against the formula in your lecture notes, and check the units.')}
+function numCheck(id,x){const q=QQ(id);if(near(x,q.ans,q.tol)){pass(id,q.right);return}const t=q.traps.find(([v,tol])=>near(x,v,tol));fail(id,t?t[2]:Math.abs(x-q.ans)<=Math.abs(q.ans)*.05?'Very close. Set it to the exact figure in the manual.':'Not yet. Check each step against the formula in your lecture notes, and check the units.')}
 function recalc(r){if(!r)return;const c=r.querySelector('.calcin'),o=r.querySelector('.out');if(!c||!o)return;const v=calcEval(c.value);o.textContent=c.value.trim()?(v===null?'...':'= '+show(v)):''}
 const LK={a:{k:'wheel',s:1,i:2,d:1,head:'a<sub>th</sub> in m/s²'},al:{k:'al',s:1,i:2,d:1,head:'α<sub>th</sub> in rad/s²'},I:{k:'iw',s:0,i:0,d:4,head:'I<sub>th</sub> in kg m²'}};
 const drum=(key,i,v)=>`<div class="wh"><button type="button" data-wh="${key}:${i}:1" aria-label="Roll up"></button><div class="wd"><s>${(v+1)%10}</s><b>${v}</b><s>${(v+9)%10}</s></div><button type="button" data-wh="${key}:${i}:-1" aria-label="Roll down"></button></div>`;
@@ -608,11 +608,11 @@ const tableHTML=(open)=>`<div class="table">${open?`<button type="button" class=
 const NOTEHTML=()=>`<div class="paper rush torn"><p>I could not finish the thigh.</p><p>The war is over and they want us out tonight. The pumps have stopped and the water is at the bench. Foot and shank are done. I have locked the manual in its case so nobody spoils the figures.</p><p>The key is the ${S.hint&&S.hint.com_w?'<b>thigh</b>':'thigh'}.</p><p class="sign">E. H.</p></div>`;
 
 const PANELS={
- sheet(){const q=Q.sheet[0],done=!!S.solved.sheet;return shell('sheet',`<div class="paper letter"><div class="seal"></div><p class="stamp">SECRET</p><p class="tp">Laboratory 7. 11th November 1918.</p><p class="tp">To whoever opens this.</p><p class="tp">This laboratory has measured the human body, segment by segment, for the Ministry. The war ended this morning and we are ordered out tonight. Our giant needs eight inputs for one thigh. The instruments recorded some. The rest we worked out by hand, and not all of it is done.</p><p class="tp">Mark each as we did, and sign. The door will know.</p>
+ sheet(){const q=Q.sheet[0],done=!!S.solved.sheet;return shell('sheet',`<div class="paper letter"><div class="seal"></div><p class="stamp">SECRET</p><p class="tp">Project Vitruvius. 11th November 1918.</p><p class="tp">To whoever opens this.</p><p class="tp">This laboratory has measured the human body, segment by segment, for the Ministry. The war ended this morning and we are ordered out tonight. Our giant needs eight inputs for one thigh. The instruments recorded some. The rest we worked out by hand, and not all of it is done.</p><p class="tp">Mark each as we did, and sign. The door will know.</p>
    <table class="tick"><tr><th></th><th>Have</th><th>Calculate</th></tr>${q.items.map(([id,t,w])=>{const v=done?w:U.sel[id];return `<tr><td>${t}</td><td><button type="button" class="tk ${v==='have'?'on':''}" data-sort="${id}:have" aria-label="${t}: have"></button></td><td><button type="button" class="tk ${v==='calc'?'on':''}" data-sort="${id}:calc" aria-label="${t}: calculate"></button></td></tr>`}).join('')}</table></div>
    ${done||SEEN.sheet?'':'<div class="row"><button type="button" class="btn" data-act="checksort">Sign the letter</button></div>'}`)},
  com(){const open=!!S.found.manual,done=!!S.solved.com;
-  if(!open&&U.lift)return shell('com',`<div class="caseup"><div class="strap"></div><div class="clid"><b>Laboratory Manual</b><small>Laboratory 7 · 1918</small></div><div class="hasp"><i></i><i></i><i></i><i></i><div class="wheels words">${U.word.map((n,i)=>{const L=WORD[i],m=L.length;return `<div class="wh"><button type="button" data-lw="${i}:1" aria-label="Roll up"></button><div class="wd"><s>${L[(n+1)%m]}</s><b>${L[n]}</b><s>${L[(n+m-1)%m]}</s></div><button type="button" data-lw="${i}:-1" aria-label="Roll down"></button></div>`}).join('')}</div></div></div><div class="note lmsg">${U.wmsg||''}</div><div class="row"><button type="button" class="btn" data-act="tryword">Try the lock</button><button type="button" class="btn q" data-act="putdown">Put it down</button></div>${S.hint&&S.hint.com_w?NOTEHTML():'<button type="button" class="cost" data-act="wordhint">Ask for a hint<small>the water rises 1 minute</small></button>'}`);
+  if(!open&&U.lift)return shell('com',`<div class="caseup"><div class="strap"></div><div class="clid"><b>Laboratory Manual</b><small>Project Vitruvius · 1918</small></div><div class="hasp"><i></i><i></i><i></i><i></i><div class="wheels words">${U.word.map((n,i)=>{const L=WORD[i],m=L.length;return `<div class="wh"><button type="button" data-lw="${i}:1" aria-label="Roll up"></button><div class="wd"><s>${L[(n+1)%m]}</s><b>${L[n]}</b><s>${L[(n+m-1)%m]}</s></div><button type="button" data-lw="${i}:-1" aria-label="Roll down"></button></div>`}).join('')}</div></div></div><div class="note lmsg">${U.wmsg||''}</div><div class="row"><button type="button" class="btn" data-act="tryword">Try the lock</button><button type="button" class="btn q" data-act="putdown">Put it down</button></div>${S.hint&&S.hint.com_w?NOTEHTML():'<button type="button" class="cost" data-act="wordhint">Ask for a hint<small>the water rises 1 minute</small></button>'}`);
   return shell('com',`${tableHTML(open)}${U.read?NOTEHTML():''}${done?'<div class="paper hand"><p>Thigh. Centre of mass (−0.0282, 0.6573). Done.</p></div>':''}`)},
  film(){const k=stage('film'),done=!!S.solved.film;
   if(k===1&&!done)return shell('film',`<div class="paper hand"><p>Pencilled on the drum: which three frames does the sum use at frame 1?</p></div><div class="frames">${ZF.map(([n])=>`<button type="button" class="${U.pick.includes(n)?'on':''}" data-pick="${n}" aria-label="Frame ${n}" style="background-position:${(n-1)*12.5}% 50%"><span>${n}</span></button>`).join('')}</div><div class="row"><button type="button" class="btn" data-act="checkpick">Set the frames</button></div>`);
@@ -622,11 +622,11 @@ const PANELS={
   if(k===1){const q=Q.dial[1];return shell('dial',`<div class="paper hand"><p>The surveyor's last sketch. Both give 9° from cos⁻¹. Which foot is the negative one?</p></div><div class="sketches">${[[-1,0],[1,1]].map(([s,i])=>`<button type="button" class="opt" data-opt="${i}" aria-label="${q.opts[i][0]}">${footSVG(s)}<br>${q.opts[i][0]}</button>`).join('')}</div>`)}
   if(k===2)return shell('dial',lockHTML('al'));
   return shell('dial',`<svg class="stage" id="dial" viewBox="0 0 320 200" role="img" aria-label="A half dial marked from 0 to 180 degrees">${dialSVG()}</svg>
-   <div class="row"><button type="button" class="btn q" data-deg="-1">−1°</button><button type="button" class="btn q" data-deg="1">+1°</button><button type="button" class="btn" data-act="setdial">Set the dial</button></div>`)},
+   <div class="row"><button type="button" class="btn q nud" data-deg="-1">−1°</button><button type="button" class="btn q nud" data-deg="-0.1">−0.1°</button><button type="button" class="btn q nud" data-deg="0.1">+0.1°</button><button type="button" class="btn q nud" data-deg="1">+1°</button></div><div class="row"><button type="button" class="btn" data-act="setdial">Set the dial</button></div>`)},
  scale(){const done=!!S.solved.scale;return shell('scale',`<div id="scalebox">${scaleSVG()}</div>${done?'':`<div class="wbox">${[5,2,1,.5,.2,.1,.05,.02].map(k=>`<button type="button" class="plate" data-plate="${k}" style="--d:${Math.round(46+Math.pow(k,.35)*14)}px">${k}<small>kg</small></button>`).join('')}</div>
    <div class="row"><button type="button" class="btn q" data-act="undo">Take off last</button><button type="button" class="btn" data-act="weigh">Release the lift</button></div>`}`)},
  pend(){const k=stage('pend'),done=!!S.solved.pend,a=k===0&&!done;return shell('pend',`<svg class="stage" id="pen" viewBox="0 0 320 196" role="img" aria-label="Two swinging axes"></svg>
-   ${a?`<div class="read" id="rread"></div><input class="range" id="rs" type="range" min="50" max="250" step=".5" value="${U.R*1000}" aria-label="Sleeve position">${nudge('rs',.5)}<div class="row"><button type="button" class="btn" data-act="sleeve">Lock the sleeve</button></div>`:''}
+   ${a?`<div class="read" id="rread"></div><input class="range" id="rs" type="range" min="50" max="250" step=".1" value="${U.R*1000}" aria-label="Sleeve position">${nudge('rs')}<div class="row"><button type="button" class="btn" data-act="sleeve">Lock the sleeve</button></div>`:''}
    ${k===1&&!done?lockHTML('I'):''}`)},
  term(){const k=stage('term'),done=!!S.solved.term,L=Q.term[1];
   if(k===0&&!done)return shell('term',`<div class="paper hand"><p>The men call it the Idol, for its brass face. Inside is the Professor's calculating engine. Feed it the marks from the film, turn the crank, and it prints the thigh on a slip.</p><p>At first he trusted it. Then he read a slip and said it did not look right: "We must check it, Hartley." That is why he had me keep every figure by hand.</p><p>I never finished the thigh, so I could not compare them. One line of this slip must be wrong. E. H.</p></div><div class="opts slip"><small>Printed by the machine. Thigh.</small>${Q.term[0].opts.map(([t],i)=>`<button type="button" class="opt" data-opt="${i}">${t}</button>`).join('')}</div>`);
@@ -635,16 +635,16 @@ const PANELS={
  end(){const used=(S.tEnd-S.t0)/1000;
   const tag=s=>S.help[s.id]?'<span class="tag c">Used the working</span>':hc(s.id)?'<span class="tag b">Used a hint</span>':!S.wrong[s.id]?'<span class="tag a">First try</span>':`<span class="tag b">${S.wrong[s.id]} wrong ${S.wrong[s.id]===1?'try':'tries'}</span>`;
   const again=LV.filter(s=>S.help[s.id]||hc(s.id)||(S.wrong[s.id]||0)>=2);
-  return `<article class="pan"><div class="eyebrow">Out in ${fmt(used)}${S.team?' · team '+esc(S.team):''}</div><div class="title-big">You woke the Colossus</div>
+  return `<article class="pan"><div class="eyebrow">Out in ${fmt(used)}${S.team?' · team '+esc(S.team):''}</div><div class="title-big">You woke the giant</div>
    <p>Five inputs rebuilt, each from the one before, one faulty machine repaired, and one stride through the wall.${S.pen?` Hints added ${Math.round(S.pen/60)} ${S.pen===60?'minute':'minutes'} to your time.`:''}</p>
    <div class="box"><h4>Your thigh, rebuilt</h4><div class="scroll"><table>${INS.map(i=>`<tr><td>${i[3]}</td><td>${i[2]}</td></tr>`).join('')}</table></div></div>
    <div class="box"><h4>What each level taught you</h4><div class="scroll"><table>${LV.map(s=>`<tr><td><b>${s.where}: ${s.name}</b><br><span class="note">${LEARN[s.id]}</span></td><td>${tag(s)}</td></tr>`).join('')}</table></div></div>
    ${again.length?`<div class="box"><h4>Go back to these lecture slides</h4><div class="scroll"><table>${again.map(s=>`<tr><td><b>${s.slide}</b><br><span class="note">${s.why}</span></td></tr>`).join('')}</table></div></div>`:'<p>No level needed more than one wrong try. Your team is ready for Thursday.</p>'}
    <p>Look up at the leaderboard. Which level cost your group the most tries? Your lecturer will ask.</p><p>On Thursday you build all of this in <span style="font-family:var(--f-type)">main.m</span>, line by line, on your own runner.</p>
    <div class="row"><button type="button" class="btn q" data-act="again">Climb again</button></div>
-   <p class="note">ESS3805 · Dr Naser Taleshi. Laboratory 7, its people and the manual are fiction. Braune, Fischer and Meeh are real. The table in the manual is Dempster's (1955), moved back in time for the story. Statue model Michelle and the run cycle from the three.js examples (Mixamo); lighting from Poly Haven.</p></article>`}
+   <p class="note">ESS3805 · Dr Naser Taleshi. Project Vitruvius, its people and the manual are fiction. Braune, Fischer and Meeh are real. The table in the manual is Dempster's (1955), moved back in time for the story. Statue model Michelle and the run cycle from the three.js examples (Mixamo); lighting from Poly Haven.</p></article>`}
 };
-const nudge=(id,s)=>`<div class="row"><button type="button" class="btn q nud" data-nudge="${id}:${-s}" aria-label="A little less">Less</button><button type="button" class="btn q nud" data-nudge="${id}:${s}" aria-label="A little more">More</button></div>`;
+const nudge=id=>`<div class="row">${[[-1,'−0.001'],[-.1,'−0.0001'],[.1,'+0.0001'],[1,'+0.001']].map(([s,t])=>`<button type="button" class="btn q nud" data-nudge="${id}:${s}">${t}</button>`).join('')}</div>`;
 const BRASS=`<defs><linearGradient id="bz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1d691"/><stop offset=".42" stop-color="#c79a45"/><stop offset=".58" stop-color="#a97b2c"/><stop offset="1" stop-color="#7c5618"/></linearGradient><linearGradient id="bv" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7c5618"/><stop offset=".4" stop-color="#f1d691"/><stop offset="1" stop-color="#8e6620"/></linearGradient></defs>`;
 function scaleSVG(){
   const kg=S.solved.scale?6.57:U.plates.reduce((a,b)=>a+b,0),a=(-120+Math.min(kg,8)/8*240)*Math.PI/180,nx=95+70*Math.sin(a),ny=98-70*Math.cos(a);
@@ -671,11 +671,11 @@ function dialSVG(fix){
    ${th>0?`<path d="M${bx} ${by}A34 34 0 0 0 ${ax} ${ay}" fill="none" stroke="#6d1f12" stroke-width="1.5"/>`:''}
    <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#1c1a20" stroke-width="6" stroke-linecap="round"/><circle cx="${nx}" cy="${ny}" r="8" fill="url(#bz)" stroke="#17100a"/><circle cx="${cx}" cy="${cy}" r="9" fill="url(#bz)" stroke="#17100a"/>
    <text x="${cx}" y="${cy-11}" fill="#f0e2bf" font-size="13" text-anchor="middle" font-family="var(--f-print)">Hip</text><text x="${nx+(th<90?-13:13)}" y="${ny+4}" fill="#2a1c0c" font-size="13" text-anchor="${th<90?'end':'start'}" font-family="var(--f-print)">Knee</text>
-   <text x="${cx+96}" y="${cy-9}" fill="#f0e2bf" font-size="19" font-weight="700" text-anchor="middle" font-family="var(--f-print)">θ = ${Math.round(th)}°</text>`;
+   <text x="${cx+96}" y="${cy-9}" fill="#f0e2bf" font-size="19" font-weight="700" text-anchor="middle" font-family="var(--f-print)">θ = ${(+th).toFixed(1)}°</text>`;
 }
 const T_of=R=>{const d=.1784;return 2*Math.PI*Math.sqrt((R*R+d*d)/(9.81*d))};   // compound pendulum about the hip end
 const INITS={
- dial(){const d=$('#dial');if(!d||S.solved.dial)return;const ang=e=>{const r=d.getBoundingClientRect(),k=320/r.width,x=(e.clientX-r.left)*k-160,y=(e.clientY-r.top)*k-30;let a=Math.atan2(y,-x)*180/Math.PI;if(a<0)a=a<-90?180:0;U.deg=Math.round(Math.min(180,a));d.innerHTML=dialSVG()};let on=false;
+ dial(){const d=$('#dial');if(!d||S.solved.dial)return;const ang=e=>{const r=d.getBoundingClientRect(),k=320/r.width,x=(e.clientX-r.left)*k-160,y=(e.clientY-r.top)*k-30;let a=Math.atan2(y,-x)*180/Math.PI;if(a<0)a=a<-90?180:0;U.deg=Math.round(Math.min(180,a)*10)/10;d.innerHTML=dialSVG()};let on=false;
    d.addEventListener('pointerdown',e=>{on=true;d.setPointerCapture(e.pointerId);ang(e)});d.addEventListener('pointermove',e=>{if(on)ang(e)});d.addEventListener('pointerup',()=>on=false)},
  pend(){const rs=$('#rs'),rr=$('#rread'),showR=()=>{if(rr)rr.innerHTML=`${U.R.toFixed(4)} m <small>sleeve from the CoM</small>`};showR();U.pt0=performance.now();
    if(rs)rs.addEventListener('input',()=>{U.R=rs.value/1000;showR();U.pt0=performance.now()});
@@ -696,19 +696,19 @@ const FM=s=>`<div class="fm">${s}</div>`,WK=s=>`<div class="wk">${s}</div>`,YR=s
 const RESULT=[['Thigh vector, Knee − Hip','(0.1580, −0.3805) m'],['Centre of mass (Y, Z)','(−0.0282, 0.6573) m'],[`Linear acceleration ${gk('a')}`,'−9.0 m/s²'],['Length of the thigh','0.4120 m'],[`Angle ${gk('θ')}`,'112.6° = 1.9644 rad'],[`Angular acceleration ${gk('α')}`,'−47.5 rad/s²'],['Mass m<sub>th</sub>','6.57 kg'],['Radius of gyration R<sub>th</sub>','0.1331 m'],['Moment of inertia I<sub>th</sub>','0.1164 kg m²']];
 const FR=(a,b)=>`<table class="ht wk2"><tr><th></th><th>Y</th><th>Z</th></tr>${[a,b].flat().map(([n,y,z])=>`<tr><td>${n}</td><td>${y}</td><td>${z}</td></tr>`).join('')}</table>`;
 function bookSeq(){const s=S.solved,f=S.found,P=[],add=(key,g)=>P.push([key,g]),rows=ZF.map(([n,y])=>`<div><b>${n}</b><span>Y ${y.replace('-','−')}</span></div>`).join('');
- add('cover',()=>`<section class="pgi cover"><div class="gilt"><small>Laboratory 7 · 1918</small><h4>Laboratory<br>Manual</h4><i></i><p>Not to leave<br>this room</p></div></section>`);
- add('fly',n=>`<section class="pgi fly"><div class="bplate"><small>This manual is the property of</small><b>Laboratory 7</b><dl><dt>Kept by</dt><dd>E. Hartley, assistant to Prof. Lindqvist</dd><dt>Begun</dt><dd>3rd May 1916</dd></dl></div><p>We cut the giant to one man's measure, so that every segment could be hung, weighed and timed. Give its machine the inputs of one thigh and it will finish the stride.</p><p>I asked the Professor how much I should carry in my head. "Nothing, Hartley. Take a note of it. You will need it."</p><p>The later pages went with me up the leg, as far as I got.</p><p class="sign">Finish what I could not.</p><footer>${n}</footer></section>`);
+ add('cover',()=>`<section class="pgi cover"><div class="gilt"><small>Project Vitruvius · 1918</small><h4>Laboratory<br>Manual</h4><i></i><p>Not to leave<br>this room</p></div></section>`);
+ add('fly',n=>`<section class="pgi fly"><div class="bplate"><small>This manual is the property of</small><b>Project Vitruvius</b><dl><dt>Kept by</dt><dd>E. Hartley, assistant to Prof. Lindqvist</dd><dt>Begun</dt><dd>3rd May 1916</dd></dl></div><p>We cut the giant to one man's measure, so that every segment could be hung, weighed and timed. Give its machine the inputs of one thigh and it will finish the stride.</p><p>I asked the Professor how much I should carry in my head. "Nothing, Hartley. Take a note of it. You will need it."</p><p>The later pages went with me up the leg, as far as I got.</p><p class="sign">Finish what I could not.</p><footer>${n}</footer></section>`);
  add('how',pgh('How a thigh is found',`<p>Nobody can weigh a thigh on a living man, and no marker sits at its centre of mass. So I copied out how it was done at Leipzig in 1889.</p><p>Braune and Fischer took three bodies, kept frozen so that no fluid was lost. They drove thin rods into each segment and hung it from three axes. Each time a plane ran straight down through the rod. Where the planes crossed lay the centre of mass.</p>${sketch()}`));
  add('seg',pgh('Finding a centre of mass',`<p>I asked the Professor about Meeh's water method of 1894, lowering segments into a tank. "No," he said. "We use our own hanging room."</p><table class="ht lg"><tr><th>Segment</th><th>Proximal end</th><th>Fraction</th></tr><tr><td>Foot</td><td>Ankle</td><td>0.500</td></tr><tr><td>Shank</td><td>Knee</td><td>0.433</td></tr><tr><td>Thigh</td><td>Hip</td><td>0.433</td></tr></table>${FM('CoM = proximal end + fraction × (distal end − proximal end)')}<p class="sm">Once for Y, once for Z. Metres. Y runs along the path, Z runs up.</p>`,'ring'));
  add('done',pgh('Worked so far',`<p class="sh">Foot</p>${FR([['Ankle','−0.1330','0.0970'],['Toe','−0.0038','0.0468']],[['CoM','−0.0684','0.0719']])}<p class="sh">Shank</p>${FR([['Knee','0.0614','0.4416'],['Ankle','−0.1330','0.0970']],[])}${WK('Y = 0.0614 + 0.433 × (−0.1330 − 0.0614) = −0.0228<br>Z = 0.4416 + 0.433 × (0.0970 − 0.4416) = 0.2924')}<p class="sh">Thigh</p><p class="tight">I began the sum overleaf, and had only got half way when</p>${blot}`,'wet'));
  add('plate',pgh('The thigh: centre of mass',`<figure class="phot"><div class="ph"><svg viewBox="0 0 300 370" aria-label="Pencil marks on the photograph: Hip Y minus 0.0966, Z 0.8221. Knee Y 0.0614, Z 0.4416." role="img"><g fill="none" stroke="#120c07" stroke-width="1.4"><path d="M52 110C62 94 82 86 103 82"/><path d="M103 82l-10 -3M103 82l-8 7"/><path d="M98 302C124 292 158 266 170 234"/><path d="M170 234l-9 7M170 234l4 10"/></g><g class="pm"><text x="26" y="124">Hip</text><text x="26" y="145">Y −0.0966</text><text x="26" y="166">Z 0.8221</text><text x="30" y="300">Knee</text><text x="30" y="321">Y 0.0614</text><text x="30" y="342">Z 0.4416</text></g>${s.com?'<g class="yours"><path d="M139 24V338" fill="none" stroke="#1b2c62" stroke-width="1" stroke-dasharray="6 5"/><path d="M131 142h16M139 134v16" fill="none" stroke="#1b2c62" stroke-width="2"/><text x="146" y="134">CoM</text></g>':''}</svg></div></figure>${eqHTML('com_0')}`,'pl'));
- if(f.pFilm){add('acc',pgh('Acceleration of the CoM',`<p class="tight">The Professor cranked the camera as hard as he could: 50 frames every second. That film now spins on the drum at the ankle.</p><p class="tight">One frame says where the thigh is. For its acceleration we use the central difference, which takes three frames: the frame before, the frame itself and the frame after.</p><div class="f3"><div style="background-position:12.5% 50%"><span>before</span></div><div style="background-position:25% 50%"><span>this frame</span></div><div style="background-position:37.5% 50%"><span>after</span></div></div>${FM(`a<sub>i</sub> = (x<sub>i−1</sub> − 2x<sub>i</sub> + x<sub>i+1</sub>) ÷ (Δt)²`)}<p class="sm">x is the position at each frame. Δt is the time from one frame to the next: 1 ÷ 50 = 0.02 s.</p>${WK('<u>Frame 3, worked.</u> ( −0.1986 − 2 × (−0.1352) + (−0.0788) ) ÷ 0.02² = −17.5 m/s²')}`));
+ if(f.pFilm){add('acc',pgh('Acceleration of the CoM',`<p class="tight">The Professor cranked the camera as hard as he could: 50 frames every second. That film now spins on the drum at the ankle.</p><p class="tight">One frame says where the thigh is. For its acceleration we use the central difference, which takes three frames: the frame before, the frame itself and the frame after.</p><div class="f3"><div style="background-position:12.5% 50%"><span>before</span></div><div style="background-position:25% 50%"><span>this frame</span></div><div style="background-position:37.5% 50%"><span>after</span></div></div>${FM('a = (before − 2 × this + after) ÷ t²')}<p class="sm">t is the time from one frame to the next: 1 ÷ 50 = 0.02 s.</p>${WK('<u>Frame 3, worked.</u> ( −0.1986 − 2 × (−0.1352) + (−0.0788) ) ÷ 0.02² = −17.5 m/s²')}`));
   add('film',pgh('The film',`<p class="tight">Beside each frame I pencilled the Y of the thigh's centre of mass. The Professor wanted one frame only, and I no longer know which. If the thigh's sum was finished, on page 5, its Y will show it.</p><div class="filmp"><div class="fstrip" role="img" aria-label="A strip of nine film frames of the runner"></div><div class="flist">${rows}</div></div>${eqHTML('film_0')}`,'fl'))}
- if(f.pEnds)add('ends',pgh('The end of the film',`<p>Frame 1 has no frame before it, so it cannot use the central difference. It looks forwards instead.</p>${FM(`a<sub>1</sub> = a<sub>2</sub> = (x<sub>1</sub> − 2x<sub>2</sub> + x<sub>3</sub>) ÷ (Δt)²`)}<p>The last frame has no frame after it, so it looks backwards.</p>${PC('the same sum, three frames in a row, all on one side')}`));
+ if(f.pEnds)add('ends',pgh('The end of the film',`<p>Frame 1 has no frame before it, so it cannot use the central difference. It looks forwards instead.</p>${FM('a = (frame 1 − 2 × frame 2 + frame 3) ÷ t²')}<p>The last frame has no frame after it, so it looks backwards.</p>${PC('the same sum, three frames in a row, all on one side')}`));
  if(f.pAngle){add('angle',pgh('The angle of a segment',`<p class="tight">A segment's angle is read against a fixed arrow, v<sub>Ref</sub> = (−1, 0), which points back along the path.</p>${FM(`${gk('θ')} = cos<sup>−1</sup> ( (v<sub>1</sub> · v<sub>2</sub>) ÷ (|v<sub>1</sub>| |v<sub>2</sub>|) )`)}<p class="sm">v<sub>1</sub> is the segment vector. v<sub>2</sub> is v<sub>Ref</sub>.</p>${WK(`<u>Thigh, frame 3.</u> Hip (−0.2236, 0.8281), Knee (−0.0196, 0.4734)<br>v<sub>1</sub> = Knee − Hip: Y 0.2040, Z −0.3548<br>v<sub>2</sub>: Y −1, Z 0<br>${gk('θ')} = 119.9° = 2.0926 rad`)}${WK(`<u>Shank, frame 5.</u> v<sub>1</sub> = Ankle − Knee: Y −0.1944, Z −0.3446<br>v<sub>2</sub>: Y −1, Z 0<br>${gk('θ')} = 60.6°`)}`));
   add('angle2',pgh('The thigh at the Professor\'s frame',`<p>The Professor told me to take a note of every figure, and now I see why: I no longer trust which frame I am working on.</p><p>It should all be a few pages back, on page 5. The thigh's Knee − Hip is v<sub>1</sub>. v<sub>2</sub> is the fixed arrow.</p>${eqHTML('dial_0')}`))}
  if(f.pFoot)add('foot',pgh('The foot\'s sign',`<p>cos<sup>−1</sup> gives only the size of an angle, never its sign. The thigh needs no sign. The foot does.</p>${FM('Toe in front of the ankle: plus.<br>Toe behind the ankle: minus.')}${PC('the subject travels to the right')}`));
- if(f.pAlpha)add('alpha',pgh('Angular acceleration',`<p class="tight">The same central difference as the film, on the angle this time.</p>${FM(`${gk('α')}<sub>i</sub> = (${gk('θ')}<sub>i−1</sub> − 2${gk('θ')}<sub>i</sub> + ${gk('θ')}<sub>i+1</sub>) ÷ (Δt)²`)}<table class="ht lg sl"><tr><th>Frame</th><th>${gk('θ')} in radians</th></tr><tr><td>4</td><td>2.0457</td></tr><tr><td>5</td><td class="mine">on page 10</td></tr><tr><td>6</td><td>1.8641</td></tr></table>${eqHTML('dial_2')}`));
+ if(f.pAlpha)add('alpha',pgh('Angular acceleration',`<p class="tight">The same central difference as the film, on the angle this time.</p>${FM(`${gk('α')} = (${gk('θ')} before − 2 × ${gk('θ')} this + ${gk('θ')} after) ÷ t²`)}<table class="ht lg sl"><tr><th>Frame</th><th>${gk('θ')} in radians</th></tr><tr><td>4</td><td>2.0457</td></tr><tr><td>5</td><td class="mine">on page 10</td></tr><tr><td>6</td><td>1.8641</td></tr></table>${eqHTML('dial_2')}`));
  if(f.pMass)add('mass',pgh('Segment mass',`<p class="dt">12th June</p><p class="tight">Our subject: a porter from the harbour, the man the giant was cut to measure. Weighed him on the dock scale this morning, boots off: M = 65.7 kg. Weighed him twice.</p>${FM('m = fraction × M')}<table class="ht lg sl"><tr><th>Segment</th><th>Fraction</th></tr><tr><td>Foot</td><td>0.0145</td></tr><tr><td>Shank</td><td>0.0465</td></tr><tr><td>Thigh</td><td>0.1000</td></tr></table>${WK('<u>Shank, as an example.</u> m<sub>sh</sub> = 0.0465 × 65.7 = 3.06 kg')}<p class="tight">Now the thigh.</p>${eqHTML('scale_0')}`));
  if(f.pGyr)add('gyr',pgh('The swinging axes',`<p class="tight">A segment swings as if its mass sat at one distance, R, the radius of gyration.</p>${FM('R = fraction × length l')}<table class="ht lg sl"><tr><th>Segment</th><th>Fraction</th></tr><tr><td>Foot</td><td>0.475</td></tr><tr><td>Shank</td><td>0.302</td></tr><tr><td>Thigh</td><td>0.323</td></tr></table>${WK('<u>Shank, as an example.</u> R<sub>sh</sub> = 0.302 × 0.3957 = 0.1195 m')}<p class="tight">The thigh's length should be with its angle, on page 10.</p>${eqHTML('pend_0')}`));
  if(f.pInert)add('inert',pgh('Moment of inertia',`<p class="tight">Mass and R together say how hard the segment is to swing.</p>${FM('I = m × R²')}${WK('<u>Shank, as an example.</u> I<sub>sh</sub> = 3.06 × 0.1195² = 0.0437 kg m²')}<p class="tight">For the thigh, m<sub>th</sub> should be on page 13 and R<sub>th</sub> on page 14.</p>${eqHTML('pend_1')}`));
@@ -765,7 +765,7 @@ oy.addEventListener('click',e=>{
   if(d.sort){if(S.solved.sheet||SEEN.sheet)return;const [k,v]=d.sort.split(':');U.sel[k]=v;b.closest('tr').querySelectorAll('button').forEach(q=>q.classList.toggle('on',q===b));return}
   if(d.plate){U.plates.push(+d.plate);beep('snap');$('#scalebox').innerHTML=scaleSVG();return}
   if(d.wh){const [key,a,c]=d.wh.split(':'),i=+a,s=+c,A=U[LK[key].k],v=A[i]=(A[i]+s+10)%10,w=b.parentNode.querySelector('.wd').children;w[0].textContent=(v+1)%10;w[1].textContent=v;w[2].textContent=(v+9)%10;beep('snap');return}if(d.lw){const [a,c]=d.lw.split(':').map(Number),L=WORD[a],m=L.length,v=U.word[a]=(U.word[a]+c+m)%m,w=b.parentNode.querySelector('.wd').children;w[0].textContent=L[(v+1)%m];w[1].textContent=L[v];w[2].textContent=L[(v+m-1)%m];beep('snap');return}if(d.sign){const A=U[LK[d.sign].k];A[0]=-A[0];b.textContent=A[0]>0?'+':'−';beep('snap');return}
-  if(d.deg){U.deg=Math.max(-180,Math.min(180,U.deg+ +d.deg));$('#dial').innerHTML=dialSVG();return}
+  if(d.deg){U.deg=Math.round(Math.max(-180,Math.min(180,U.deg+ +d.deg))*10)/10;$('#dial').innerHTML=dialSVG();return}
   if(d.opt!==undefined){const q=QQ(id),i=+d.opt;if(i===q.ok)pass(id,q.right);else fail(id,q.opts[i][1]);return}
   if(d.line!==undefined){const q=QQ('term'),i=+d.line;if(i===q.ok)pass('term',q.right);else fail('term',q.lines[i][2]);return}
   if(d.nudge){const [n,s]=d.nudge.split(':'),el=$('#'+n);el.value=+el.value+ +s;el.dispatchEvent(new Event('input',{bubbles:true}));return}
@@ -782,7 +782,7 @@ oy.addEventListener('click',e=>{
    case 'clrtok':U.tok=[];$('#tokbox').innerHTML=tokHTML();break;
    case 'runfix':{const t=U.tok.join();if(t==='Knee,Hip'){pass('term',QQ('term').right);break}fail('term',t==='Hip,Knee'?'That is how the idol was set, and it put the centre of mass above the hip.':'Which two joints are the ends of the thigh, and which is the head of the vector?');break}
    case 'hint':buyHint(id,1);refreshFb(id);break;
-   case 'work':buyHint(id,2);SEEN[id]=true;S.help[id]=true;if(id==='sheet')Q.sheet[0].items.forEach(([k,,w])=>U.sel[k]=w);if(id==='dial'&&stage('dial')===0)U.deg=113;if(id==='term'&&stage('term')===2)U.tok=['Knee','Hip'];if(id==='film'&&stage('film')===1)U.pick=[1,2,3];if(id==='pend'&&stage('pend')===0)U.R=.1331;save();rerender();break;
+   case 'work':buyHint(id,2);SEEN[id]=true;S.help[id]=true;if(id==='sheet')Q.sheet[0].items.forEach(([k,,w])=>U.sel[k]=w);if(id==='dial'&&stage('dial')===0)U.deg=112.6;if(id==='term'&&stage('term')===2)U.tok=['Knee','Hip'];if(id==='film'&&stage('film')===1)U.pick=[1,2,3];if(id==='pend'&&stage('pend')===0)U.R=.1331;save();rerender();break;
    case 'accept':pass(id,QQ(id).right+' This one goes on your list to look at again.');break;
    case 'checksort':{const q=Q.sheet[0],miss=q.items.filter(([k])=>!U.sel[k]);if(miss.length){MSG.sheet=['bad','Tick all eight first. '+miss.length+' still '+(miss.length===1?'needs':'need')+' a choice.'];refreshFb('sheet');break}
      const bad=q.items.filter(([k,,w])=>U.sel[k]!==w);if(!bad.length){pass('sheet',q.right);break}fail('sheet',(bad.length===1?'One tick is':bad.length+' ticks are')+' in the wrong column. '+bad[0][3]);break}
@@ -886,7 +886,7 @@ let DUM=null;
 const RB={hip:'mixamorigRightUpLeg',knee:'mixamorigRightLeg',ank:'mixamorigRightFoot',toe:'mixamorigRightToeBase'};
 const _q1=new THREE.Quaternion(),_q2=new THREE.Quaternion();
 function loadStatue(){
-  const fail2=()=>{$('#overlay').innerHTML=`<article class="pan"><div class="band"></div><h3>The Colossus would not load</h3><p>Reload the page. If that fails, try Chrome, Edge or Safari.</p></article>`;$('#overlay').hidden=false};
+  const fail2=()=>{$('#overlay').innerHTML=`<article class="pan"><div class="band"></div><h3>The temple would not load</h3><p>Reload the page. If that fails, try Chrome, Edge or Safari.</p></article>`;$('#overlay').hidden=false};
   if(!THREE.GLTFLoader||!ASSET.michelle){fail2();return}
   try{const bin=atob(ASSET.michelle),buf=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)buf[k]=bin.charCodeAt(k);
     new THREE.GLTFLoader().parse(buf.buffer,'',gltf=>{
@@ -1142,7 +1142,7 @@ function finaleStep(dt){
     if(!calm&&k<1){pos.x+=(Math.random()-.5)*.25;pos.y+=(Math.random()-.5)*.25}
     W.tiles.forEach(o=>{if(!o.m.visible)return;o.v.y-=16*dt;o.m.position.addScaledVector(o.v,dt);o.m.rotation.x+=o.w.x*dt;o.m.rotation.y+=o.w.y*dt;o.m.rotation.z+=o.w.z*dt;if(o.m.position.y<-14)o.m.visible=false});
     W.clouds.forEach(c=>{c.position.z+=dt*3.5});W.birds.forEach((b,i)=>{b.position.x+=dt*5;b.position.z+=dt*(1.4+i*.1);b.position.y+=Math.sin(T*1.2+i)*dt*.8;b.scale.y=2.5*(.72+.28*Math.sin(T*7+i*1.7))});
-    if(k+a>7.8&&!F.tl){F.tl=true;const n=$('#banner');$('#bk').textContent='Out in '+fmt((S.tEnd-S.t0)/1000);$('#bn').textContent='You woke the Colossus';n.classList.add('on');setTimeout(()=>n.classList.remove('on'),3800)}
+    if(k+a>7.8&&!F.tl){F.tl=true;const n=$('#banner');$('#bk').textContent='Out in '+fmt((S.tEnd-S.t0)/1000);$('#bn').textContent='You woke the giant';n.classList.add('on');setTimeout(()=>n.classList.remove('on'),3800)}
     if(k+a>11&&!F.cta&&!S.closed){F.cta=true;const b=$('#cta');b.textContent='See your report';b.hidden=false}}
 }
 function endGame(){S.closed=true;if(!S.tEnd)S.tEnd=Date.now();save();$('#cta').hidden=true;openPanel('end');$('#overlay').classList.add('vista');drawAlt()}
@@ -1189,8 +1189,8 @@ function tapAt(px,py){
 /* ---- briefing and boot ---- */
 function briefing(){
   const o=$('#overlay');
-  o.innerHTML=`<article class="pan brief"><div class="band"></div><div class="eyebrow" style="padding-right:0">Week 7 · Inverse dynamics</div><div class="title-big">Climb the Colossus</div><div class="by">ESS3805 · Dr Naser Taleshi</div>
-    <p>In 1889 at Leipzig, Braune and Fischer froze three bodies, hung every limb from thin rods and found where its mass was centred.</p><p>In the Great War a secret laboratory carried the work on, deep in an old rock temple. Its people measured the human body segment by segment, and cut a giant in stone to one man's measure. When the war ended they were ordered out overnight. The pumps stopped. The thigh was never finished.</p>
+  o.innerHTML=`<article class="pan brief"><div class="band"></div><div class="eyebrow" style="padding-right:0">Week 7 · Inverse dynamics</div><div class="title-big">Project Vitruvius</div><div class="by">ESS3805 · Dr Naser Taleshi</div>
+    <p>In 1889 at Leipzig, Braune and Fischer froze three bodies, hung every limb from thin rods and found where its mass was centred.</p><p>In the Great War a secret laboratory carried the work on, deep in an old rock temple. Its files call it only Project Vitruvius, after the Roman who wrote that the human body is built in fixed proportions. Its people measured that body segment by segment, and cut a giant in stone to one man's measure. When the war ended they were ordered out overnight. The pumps stopped. The thigh was never finished.</p>
     <p><b>You came in by the old drain, and the water came in behind you.</b> The only way out is through the wall the giant is facing, and it will walk only if its thigh is finished. They wrote everything down. They left in a hurry. So should you, if you keep what you find.</p>
     <p class="how">Look around. Touch what catches the light.<br>15 minutes · no marks · only your group name and progress appear on the leaderboard</p>
     <div class="row"><div><label class="note" for="room">Room code</label><br><input class="team" id="room" maxlength="6" style="max-width:130px;text-transform:uppercase" autocomplete="off" autocapitalize="characters"></div><div style="flex:1;min-width:190px"><label class="note" for="gname">Group name (make one up, no real names)</label><br><input class="team" id="gname" maxlength="20" placeholder="e.g. Free Body Five" autocomplete="off"></div></div><div class="note" hidden>Groups already in, tap yours if you are joining on a second device:</div><div class="chips" id="chips"></div><div class="note" id="jn" aria-live="polite"></div>
