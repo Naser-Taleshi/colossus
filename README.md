@@ -1,4 +1,4 @@
-# Climb the Colossus
+# Project Vitruvius
 
 A formative 3D escape room for ESS3805 Biomechanical Analysis of Human Movement, University of Exeter (Dr Naser Taleshi).
 
