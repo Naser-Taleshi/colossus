@@ -46,6 +46,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
 .dbr{display:grid;grid-template-columns:minmax(170px,24%) 1fr 84px;gap:12px;align-items:center;background:var(--panel);border-radius:3px;padding:0 12px}.dbr b{font:900 clamp(14px,1.5vw,20px)/1.15 var(--f-carve)}.dbr small{display:block;font:italic 400 clamp(13px,1.05vw,16px)/1.25 var(--f-mono);color:var(--dim)}.dbr.top{background:#e7d9b7 var(--tx-paper);background-size:260px;color:#2b1e10}.dbr.top small{color:#5f4f33}
 .bar{height:58%;min-height:12px;background:rgba(0,0,0,.42);border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(180deg,#f0d692,#a67a2c)}.dbr.top .bar i{background:linear-gradient(180deg,#b84030,#7d1a12)}.dbr span{font:700 clamp(16px,1.5vw,22px)/1.1 var(--f-mono);text-align:right}.dbr span small{font:400 12.5px/1.15 var(--f-mono)}
 .ask{background:#e7d9b7 var(--tx-paper);background-size:300px;color:#2b1e10;box-shadow:0 8px 24px rgba(0,0,0,.65);padding:24px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-height:0}.ask h3{margin:0;font:italic 400 18px/1.2 var(--f-mono)}.ask p{margin:0;font:400 clamp(21px,2.3vw,34px)/1.28 var(--f-mono)}.ask small{font:400 16px/1.3 var(--f-mono);color:#5f4f33}
+.fbt{display:grid;gap:6px;border-top:1px solid rgba(43,30,16,.45);padding-top:12px}.fbt small{font-size:clamp(16px,1.35vw,20px)}
 .fbtn{appearance:none;background:rgba(26,15,8,.8);border:1px solid rgba(231,199,126,.5);border-radius:3px;color:var(--fg);font:400 14px/1 var(--f-mono);padding:6px 11px;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.row{transition:none}.tile{animation:none}}
 </style>
@@ -61,7 +62,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
  <div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Hints</span><span style="text-align:right">Time</span></div></div>
  <div id="debrief"><div class="dbl" id="dbl"></div><div class="ask" id="ask"></div></div>
 </main>
-<footer><span id="fl"></span><span id="fr"><button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="restart" class="fbtn" type="button" hidden>Restart</button> <button id="fresh" type="button">New room</button></span></footer>
+<footer><span id="fl"></span><span id="fr"><button id="fbb" class="fbtn" type="button" hidden>Ask the two questions</button> <button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="restart" class="fbtn" type="button" hidden>Restart</button> <button id="fresh" type="button">New room</button></span></footer>
 <script src="libs/qrcode.min.js"></script>
 <script>
 const qs=new URLSearchParams(location.search),BASE=qs.get('db')||'https://colossus-ess3805-default-rtdb.europe-west1.firebasedatabase.app',LIMIT=900,TEST=qs.has('test'),WHERE=['Toe','Foot','Ankle','Shank','Knee','Thigh','Hip'];
@@ -91,7 +92,7 @@ function hideName(g){if(!g||g.hide)return;if(confirm(`Hide the name "${g.raw}" o
 function render(){
   const G=groups(),started=!!(D.meta&&D.meta.startAt),devs=G.reduce((a,g)=>a+g.devs,0);
   $('#count').textContent=started?`${G.filter(g=>g.done).length} of ${G.length} groups out`:`${G.length} ${G.length===1?'group':'groups'} in · ${devs} ${devs===1?'device':'devices'}`;
-  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';$('#restart').hidden=!started&&!G.length;
+  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';$('#restart').hidden=!started&&!G.length;$('#fbb').hidden=!started;
   $('#lobby').style.display=started?'none':'grid';$('#race').style.display=started?'block':'none';
   if(!started){$('#empty').style.display=G.length?'none':'';G.forEach(g=>{let t=tiles[g.k];if(!t){t=tiles[g.k]=document.createElement('div');t.className='tile';t.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#names').appendChild(t)}t.textContent=g.name;const s=document.createElement('small');s.textContent=g.devs>1?'× '+g.devs:'';t.appendChild(s)});return}
   $('#dbb').hidden=false;if(DB){debrief(G);return}
@@ -104,12 +105,15 @@ function render(){
 let DB=false;
 function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{const s=g.st||{},t=s.hint||{};n+=(s.wrong&&s.wrong[id])||0;Object.keys(t).forEach(k=>{if(k.startsWith(id+'_'))h+=t[k]})});return {id,w,sl,q,n,h,s:n+h*2}}),mx=Math.max(1,...R.map(r=>r.s)),top=R.reduce((a,b)=>b.s>a.s?b:a,R[0]);
   $('#dbl').innerHTML=R.map(r=>`<div class="dbr ${r===top&&top.s?'top':''}"><div><b>${r.w}</b><small>${r.sl}</small></div><div class="bar"><i style="width:${Math.round(100*r.s/mx)}%"></i></div><span>${r.n}<small> wrong<br>${r.h} hints</small></span></div>`).join('');
-  $('#ask').innerHTML=`<h3>${top.s?'Ask the room about the '+top.w:'No wrong tries yet'}</h3><p>${top.q}</p><small>Lecture slide: ${top.sl}</small>`}
+  $('#ask').innerHTML=`<h3>${top.s?'Ask the room about the '+top.w:'No wrong tries yet'}</h3><p>${top.q}</p><small>Lecture slide: ${top.sl}</small>${fbHTML()}`}
+function fbHTML(){const A=[[0,0,0],[0,0,0]];let n=0;Object.values(D.teams||{}).forEach(t=>Object.values(t&&t.d||{}).forEach(d=>{const f=d&&d.fb;if(!f)return;n++;if([0,1,2].includes(f.like))A[0][f.like]++;if([0,1,2].includes(f.again))A[1][f.again]++}));
+  return n?`<div class="fbt"><h3>Feedback from ${n} ${n===1?'device':'devices'}</h3><small>Enjoyed it: <b>${A[0][2]}</b> very much, <b>${A[0][1]}</b> OK, <b>${A[0][0]}</b> not really</small><small>Another game: <b>${A[1][2]}</b> yes, <b>${A[1][1]}</b> maybe, <b>${A[1][0]}</b> no</small></div>`:''}
 $('#dbb').onclick=()=>{DB=!DB;$('#dbb').textContent=DB?'Leaderboard':'Debrief';$('#race').style.visibility=DB?'hidden':'';$('#debrief').style.display=DB?'grid':'none';render()};
 setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt((end-m.startAt)/1000);render()}
   if(TEST&&lat.length){const a=[...lat].sort((x,y)=>x-y);$('#fl').textContent=`Test: ${a.length} updates, delay median ${a[a.length>>1]} ms, slowest ${a[a.length-1]} ms`}},500);
 $('#start').onclick=()=>{$('#start').disabled=true;fetch(url('/meta'),{method:'PATCH',body:JSON.stringify({startAt:{'.sv':'timestamp'}})})};
 $('#restart').onclick=async()=>{if(!confirm('Restart the game? Every group goes back to the opening screen. The room code and QR stay the same.'))return;$('#restart').disabled=true;const C='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=()=>C[Math.floor(Math.random()*C.length)],nx=HOME.slice(0,4).padEnd(4,'X')+r()+r();await fetch(`${BASE}/sessions/${nx}/meta.json`,{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});await fetch(home('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'},next:nx})});location.reload()};
+$('#fbb').onclick=async()=>{if(!confirm('Send the two questions to every phone now? They appear within about 10 seconds.'))return;const b=$('#fbb');await fetch(home('/clock'),{method:'PATCH',body:JSON.stringify({ask:ROOM})});b.textContent='Sent to the phones';setTimeout(()=>{b.textContent='Ask the two questions'},4000)};
 $('#fresh').onclick=()=>{if(confirm('Open a new empty room? Use this if you need to run the game again.')){qs.set('room',newCode());location.search=qs}};
 window.__lat=()=>{const a=[...lat].sort((x,y)=>x-y);return {n:a.length,median:a[a.length>>1]||0,p95:a[Math.floor(a.length*.95)]||0,max:a[a.length-1]||0}};
 (async()=>{try{const c=await (await fetch(home('/clock'))).json();if(c&&c.next)ROOM=c.next}catch(e){}try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}

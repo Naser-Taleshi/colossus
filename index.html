@@ -356,8 +356,8 @@ const LIVE={url:'https://colossus-ess3805-default-rtdb.europe-west1.firebasedata
 const SV={'.sv':'timestamp'};
 const api=(p,o,ms=8000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(LIVE.url+'/sessions/'+LIVE.room+p+'.json',Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))};
 async function apiR(p,o,n=4){let e;for(let i=0;i<n;i++){try{const r=await api(p,o,5000);if(r.ok)return r;e=new Error('refused')}catch(x){e=x}if(i<n-1)jnote('Still connecting...')}throw e}
-const nextOf=async code=>{try{const r=await fetch(LIVE.url+'/sessions/'+code+'/clock.json');if(!r.ok)return null;const c=await r.json();return c&&c.next||code}catch(e){return null}};
-function liveWatch(){if(LIVE.wt)return;LIVE.wt=setInterval(async()=>{if(!LIVE.room||document.hidden)return;const code=LIVE.home||LIVE.room,n=await nextOf(code);if(n&&n!==LIVE.room){clearInterval(LIVE.wt);S=fresh();save();location.href=location.pathname+'?room='+encodeURIComponent(code)}},7000+Math.random()*3000)}
+const nextOf=async code=>{try{const r=await fetch(LIVE.url+'/sessions/'+code+'/clock.json');if(!r.ok)return null;const c=await r.json();LIVE.ask=c&&c.ask;return c&&c.next||code}catch(e){return null}};
+function liveWatch(){if(LIVE.wt)return;LIVE.wt=setInterval(async()=>{if(!LIVE.room||document.hidden)return;const code=LIVE.home||LIVE.room,n=await nextOf(code);if(n&&n!==LIVE.room){clearInterval(LIVE.wt);S=fresh();save();location.href=location.pathname+'?room='+encodeURIComponent(code)}else if(n&&LIVE.ask===LIVE.room)liveAsk()},7000+Math.random()*3000)}
 const tidyName=s=>String(s||'').trim().replace(/\s+/g,' ').slice(0,20);
 const nameKey=s=>tidyName(s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const RUDE=/fuck|shit|cunt|nigg|wank|twat|bitch|(^|[^a-z])(dick|cock|arse|piss|fag)([^a-z]|$)/i;
@@ -373,6 +373,13 @@ async function livePush(){if(LIVE.busy)return;LIVE.busy=true;
   LIVE.busy=false}
 function liveResume(){const l=S.live;if(!l)return;LIVE.room=l.room;LIVE.home=l.home||l.room;LIVE.k=l.k;LIVE.name=l.name;LIVE.dev=l.dev;LIVE.n=Object.keys(S.solved).length;liveSync();liveBeat()}
 function liveBeat(){liveWatch();if(LIVE.beat)return;LIVE.beat=setInterval(()=>{if(LIVE.room&&S.started&&!S.closed&&!document.hidden)api('/teams/'+LIVE.k+'/d/'+LIVE.dev,{method:'PATCH',body:JSON.stringify({at:SV})}).catch(()=>{})},20000)}
+/* two closing questions: after the report, or when the lecturer sends them from the board */
+const FBQ=[['like','Did you enjoy the game?',['Not really','It was OK','Very much']],['again','Would you like another game like this in a later week?',['No','Maybe','Yes']]];
+function liveAsk(){if(!LIVE.room||!S.started||S.fbq||$('#fbq'))return;S.fbq=1;save();const a={},o=document.createElement('div');o.id='fbq';
+  o.style.cssText='position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(8,6,4,.72);overflow:auto';
+  o.innerHTML=`<style>#fbq .paper{width:min(100%,440px);gap:12px}#fbq p{margin:0}#fbq .fbh{font-size:21px}#fbq .fbn{font-size:15px;color:#5c4a2e}#fbq .fbr{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:6px}#fbq button{appearance:none;font:400 16px/1.15 var(--f-print);color:#20140a;cursor:pointer}#fbq .fbo{min-height:46px;padding:6px 4px;background:rgba(255,246,214,.55);border:1px solid #5c4a2e;border-radius:2px}#fbq .fbo.on{background:#2b1e10;color:#efe6cd}#fbq .fbx{justify-self:end;min-height:38px;padding:4px 8px;background:none;border:0;text-decoration:underline}</style><div class="paper"><p class="fbh">Two quick questions</p><p class="fbn">Only the totals appear on the screen. No marks.</p>${FBQ.map(([k,q,w])=>`<div><p>${q}</p><div class="fbr">${w.map((t,i)=>`<button type="button" class="fbo" data-q="${k}" data-v="${i}">${t}</button>`).join('')}</div></div>`).join('')}<button type="button" class="fbx">Not now</button></div>`;
+  o.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(!b.dataset.q){o.remove();return}const q=b.dataset.q;a[q]=+b.dataset.v;o.querySelectorAll(`[data-q="${q}"]`).forEach(x=>x.classList.toggle('on',x===b));apiR('/teams/'+LIVE.k+'/d/'+LIVE.dev+'/fb',{method:'PATCH',body:JSON.stringify({[q]:a[q]})}).catch(()=>{});if(FBQ.every(([k])=>k in a)){o.querySelector('.fbx').textContent='Thank you';setTimeout(()=>o.remove(),1500)}};
+  document.body.appendChild(o)}
 const jnote=m=>{const n=$('#jn');if(n)n.textContent=m};
 async function liveChips(){const c=$('#chips');LIVE.room=($('#room').value||'').trim().toUpperCase();if(!c||LIVE.room.length<4)return;LIVE.room=(await nextOf(LIVE.room))||LIVE.room;try{const r=await api('/teams');if(!r.ok)return;const T=await r.json();if(!T)return;c.textContent='';Object.values(T).filter(t=>t&&t.name&&!t.hide).forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t.name;b.onclick=()=>{$('#gname').value=t.name};c.appendChild(b)});c.previousElementSibling.hidden=!c.children.length}catch(e){}}
 async function liveJoin(){
@@ -1148,7 +1155,7 @@ function finaleStep(dt){
     if(k+a>7.8&&!F.tl){F.tl=true;const n=$('#banner');$('#bk').textContent='Out in '+fmt((S.tEnd-S.t0)/1000);$('#bn').textContent='You woke the giant';n.classList.add('on');setTimeout(()=>n.classList.remove('on'),3800)}
     if(k+a>11&&!F.cta&&!S.closed){F.cta=true;const b=$('#cta');b.textContent='See your report';b.hidden=false}}
 }
-function endGame(){S.closed=true;if(!S.tEnd)S.tEnd=Date.now();save();$('#cta').hidden=true;openPanel('end');$('#overlay').classList.add('vista');drawAlt()}
+function endGame(){S.closed=true;if(!S.tEnd)S.tEnd=Date.now();save();$('#cta').hidden=true;openPanel('end');$('#overlay').classList.add('vista');drawAlt();setTimeout(liveAsk,2500)}
 
 function animate(){requestAnimationFrame(animate);const dt=Math.min(.05,clock.getDelta());frame(dt,clock.elapsedTime)}
 function frame(dt,t){
