@@ -292,7 +292,7 @@ th,td{border-bottom-color:var(--line)}th{color:var(--dim);font-size:14px}table{f
 
 <canvas id="c" aria-label="A flooded temple with a giant stone runner, a 3D scene"></canvas>
 <div id="vig"></div>
-<div class="bar"><div class="brand">Project Vitruvius<small id="lvname"></small></div><div class="clk" id="clock">15:00</div></div>
+<div class="bar"><div class="brand">Project Vitruvius<small id="lvname"></small></div><div class="clk" id="clock">00:00</div></div>
 <button id="papers" hidden>Lab<br>manual</button>
 <div id="alt" aria-hidden="true"><div id="aw"></div></div>
 <div id="toast" role="status"></div>
@@ -1195,7 +1195,7 @@ function briefing(){
   o.innerHTML=`<article class="pan brief"><div class="band"></div><div class="eyebrow" style="padding-right:0">Week 7 · Inverse dynamics</div><div class="title-big">Project Vitruvius</div><div class="by">ESS3805 · Dr Naser Taleshi</div>
     <p>In 1889 at Leipzig, Braune and Fischer froze three bodies, hung every limb from thin rods and found where its mass was centred.</p><p>In the Great War a secret laboratory carried the work on, deep in an old rock temple. Its files call it only Project Vitruvius, after the Roman who wrote that the human body is built in fixed proportions. Its people measured that body segment by segment, and cut a giant in stone to one man's measure. When the war ended they were ordered out overnight. The pumps stopped. The thigh was never finished.</p>
     <p><b>You came in by the old drain, and the water came in behind you.</b> The only way out is through the wall the giant is facing, and it will walk only if its thigh is finished. They wrote everything down. They left in a hurry. So should you, if you keep what you find.</p>
-    <p class="how">Look around. Touch what catches the light.<br>15 minutes · no marks · only your group name and progress appear on the leaderboard</p>
+    <p class="how">Look around. Touch what catches the light.<br>No time limit · no marks · only your group name and progress appear on the leaderboard</p>
     <div class="row"><div><label class="note" for="room">Room code</label><br><input class="team" id="room" maxlength="6" style="max-width:130px;text-transform:uppercase" autocomplete="off" autocapitalize="characters"></div><div style="flex:1;min-width:190px"><label class="note" for="gname">Group name (make one up, no real names)</label><br><input class="team" id="gname" maxlength="20" placeholder="e.g. Free Body Five" autocomplete="off"></div></div><div class="note" hidden>Groups already in, tap yours if you are joining on a second device:</div><div class="chips" id="chips"></div><div class="note" id="jn" aria-live="polite"></div>
     <div class="row"><button type="button" class="btn" id="enter" disabled>Carving the temple…</button><label class="note"><input type="checkbox" id="snd" checked> Sound</label><button type="button" class="btn q" id="solo">Play on my own</button></div><div class="loadbar"><i id="fill"></i></div></article>`;
   o.hidden=false;
@@ -1204,10 +1204,8 @@ function briefing(){
 }
 let isReady=false;
 function ready(){if(isReady)return;isReady=true;const g=$('#enter');if(g){g.disabled=false;g.textContent='Enter the temple'}cta()}
-let warned=false;
 function tick(){
-  if(!S.started)return;const left=Math.max(0,LIMIT-Math.floor(elapsed())),c=$('#clock');c.textContent=fmt(left);c.classList.toggle('low',left<=120);
-  if(left===0&&!warned&&!S.closed){warned=true;toast('Time is up. The water has stopped at your feet. Keep going if you can, or finish on ELE later.',6000)}
+  if(!S.started)return;$('#clock').textContent=fmt(Math.floor(elapsed()));
 }
 function start(){
   load();liveResume();drawAlt();if(!S.closed&&S.started)paused=false;else if(!S.started)briefing();

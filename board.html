@@ -54,7 +54,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
 <header>
  <div class="brand">Project Vitruvius<small>ESS3805 · Dr Naser Taleshi</small></div>
  <div id="code">Room<b id="rc"></b></div><div id="count"></div><div class="sp"></div>
- <button id="start" type="button" disabled>Start the climb</button><div id="clock">15:00</div>
+ <button id="start" type="button" disabled>Start the climb</button><div id="clock">00:00</div>
 </header>
 <main>
  <div id="lobby"><div class="join"><div id="qr"></div><div class="u" id="ju"></div><div class="c">Room code<b id="jc"></b></div></div><div id="names"><div id="empty">Group names appear here as they join. Click a name to hide it.</div></div></div>
@@ -106,7 +106,7 @@ function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{co
   $('#dbl').innerHTML=R.map(r=>`<div class="dbr ${r===top&&top.s?'top':''}"><div><b>${r.w}</b><small>${r.sl}</small></div><div class="bar"><i style="width:${Math.round(100*r.s/mx)}%"></i></div><span>${r.n}<small> wrong<br>${r.h} hints</small></span></div>`).join('');
   $('#ask').innerHTML=`<h3>${top.s?'Ask the room about the '+top.w:'No wrong tries yet'}</h3><p>${top.q}</p><small>Lecture slide: ${top.sl}</small>`}
 $('#dbb').onclick=()=>{DB=!DB;$('#dbb').textContent=DB?'Leaderboard':'Debrief';$('#race').style.visibility=DB?'hidden':'';$('#debrief').style.display=DB?'grid':'none';render()};
-setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt(LIMIT-(end-m.startAt)/1000);render()}
+setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt((end-m.startAt)/1000);render()}
   if(TEST&&lat.length){const a=[...lat].sort((x,y)=>x-y);$('#fl').textContent=`Test: ${a.length} updates, delay median ${a[a.length>>1]} ms, slowest ${a[a.length-1]} ms`}},500);
 $('#start').onclick=()=>{$('#start').disabled=true;fetch(url('/meta'),{method:'PATCH',body:JSON.stringify({startAt:{'.sv':'timestamp'}})})};
 $('#restart').onclick=async()=>{if(!confirm('Restart the game? Every group goes back to the opening screen. The room code and QR stay the same.'))return;$('#restart').disabled=true;const C='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=()=>C[Math.floor(Math.random()*C.length)],nx=HOME.slice(0,4).padEnd(4,'X')+r()+r();await fetch(`${BASE}/sessions/${nx}/meta.json`,{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});await fetch(home('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'},next:nx})});location.reload()};
