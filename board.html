@@ -62,7 +62,7 @@ footer{position:absolute;left:24px;right:24px;bottom:8px;font:400 12px/1.4 var(-
  <div id="race"><div class="hd"><span></span><span>Group</span><div class="pips" id="hp"></div><span style="text-align:right">Wrong</span><span style="text-align:right">Hints</span><span style="text-align:right">Time</span></div></div>
  <div id="debrief"><div class="dbl" id="dbl"></div><div class="ask" id="ask"></div></div>
 </main>
-<footer><span id="fl"></span><span id="fr"><button id="fbb" class="fbtn" type="button" hidden>Ask the two questions</button> <button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="restart" class="fbtn" type="button" hidden>Restart</button> <button id="fresh" type="button">New room</button></span></footer>
+<footer><span id="fl"></span><span id="fr"><button id="fbb" class="fbtn" type="button" hidden>Stop the game</button> <button id="dbb" class="fbtn" type="button" hidden>Debrief</button> <button id="restart" class="fbtn" type="button" hidden>Restart</button> <button id="fresh" type="button">New room</button></span></footer>
 <script src="libs/qrcode.min.js"></script>
 <script>
 const qs=new URLSearchParams(location.search),BASE=qs.get('db')||'https://colossus-ess3805-default-rtdb.europe-west1.firebasedatabase.app',LIMIT=900,TEST=qs.has('test'),WHERE=['Toe','Foot','Ankle','Shank','Knee','Thigh','Hip'];
@@ -84,7 +84,7 @@ function apply(ev,merge){
   if(ev.data&&ev.data.ts){const l=Date.now()-ev.data.ts;if(l>=0&&l<60000)lat.push(l)}
   if(!queued){queued=true;setTimeout(()=>{queued=false;render()},60)}
 }
-const serverNow=()=>Date.now()+offset;
+const serverNow=()=>Date.now()+offset,stopAt=()=>(D.clock&&D.clock.stopAt)||0;
 function groups(){const T=D.teams||{};return Object.keys(T).map(k=>{const t=T[k]||{},ds=Object.values(t.d||{}).filter(d=>d&&typeof d==='object');let b=null;
     for(const d of ds){const nd=d.done||0,nb=b&&(b.done||0);if(!b||nd>nb||(nd===nb&&((d.n||0)>(b.n||0)||((d.n||0)===(b.n||0)&&(d.pa||9e15)<(b.pa||9e15)))))b=d}
     return Object.assign({},b||{},{k,name:t.hide?'Hidden name':(t.name||'...'),raw:t.name,hide:t.hide,devs:ds.length,last:Math.max(0,...ds.map(d=>d.at||0))})}).filter(g=>g.devs).sort((a,b)=>(b.done||0)-(a.done||0)||(b.n||0)-(a.n||0)||((a.pa||9e15)+(a.pen||0)*1000)-((b.pa||9e15)+(b.pen||0)*1000)||String(a.name).localeCompare(b.name))}
@@ -92,7 +92,7 @@ function hideName(g){if(!g||g.hide)return;if(confirm(`Hide the name "${g.raw}" o
 function render(){
   const G=groups(),started=!!(D.meta&&D.meta.startAt),devs=G.reduce((a,g)=>a+g.devs,0);
   $('#count').textContent=started?`${G.filter(g=>g.done).length} of ${G.length} groups out`:`${G.length} ${G.length===1?'group':'groups'} in · ${devs} ${devs===1?'device':'devices'}`;
-  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';$('#restart').hidden=!started&&!G.length;$('#fbb').hidden=!started;
+  $('#start').style.display=started?'none':'';$('#start').disabled=!G.length;$('#fresh').style.display=started?'none':'';$('#restart').hidden=!started&&!G.length;$('#fbb').hidden=!started;if(stopAt()){$('#fbb').disabled=true;$('#fbb').textContent='Game stopped'}
   $('#lobby').style.display=started?'none':'grid';$('#race').style.display=started?'block':'none';
   if(!started){$('#empty').style.display=G.length?'none':'';G.forEach(g=>{let t=tiles[g.k];if(!t){t=tiles[g.k]=document.createElement('div');t.className='tile';t.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#names').appendChild(t)}t.textContent=g.name;const s=document.createElement('small');s.textContent=g.devs>1?'× '+g.devs:'';t.appendChild(s)});return}
   $('#dbb').hidden=false;if(DB){debrief(G);return}
@@ -100,7 +100,7 @@ function render(){
   G.forEach((g,i)=>{let r=rows[g.k];if(!r){r=rows[g.k]=document.createElement('div');r.innerHTML=`<span class="rk"></span><span class="nm"></span><div class="pips">${WHERE.map(()=>'<i></i>').join('')}</div><span class="tr"></span><span class="tr"></span><span class="tm"></span>`;r.onclick=()=>hideName(groups().find(x=>x.k===g.k));$('#race').appendChild(r)}
     r.className='row'+(g.done?' done':'')+(g.done&&i<3?' g'+(i+1):'')+(!g.done&&serverNow()-(g.last||0)>45000?' off':'');r.style.height=(rh-gap)+'px';r.style.transform=`translateY(${26+i*rh}px)`;
     r.children[0].textContent=i+1;r.children[1].textContent=g.name;[...r.children[2].children].forEach((p,k)=>{const n=g.n||0;p.className=k<n?'on':k===n&&!g.done?'now':''});
-    r.children[3].textContent=g.wrong||0;r.children[4].textContent=g.pen?'+'+Math.round(g.pen/60)+' min':'';r.children[5].textContent=fmt(((g.done?g.pa:Math.max(g.pa||0,serverNow()))-D.meta.startAt)/1000+(g.pen||0))});
+    r.children[3].textContent=g.wrong||0;r.children[4].textContent=g.pen?'+'+Math.round(g.pen/60)+' min':'';r.children[5].textContent=fmt(((g.done?g.pa:Math.min(stopAt()||9e15,Math.max(g.pa||0,serverNow())))-D.meta.startAt)/1000+(g.pen||0))});
 }
 let DB=false;
 function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{const s=g.st||{},t=s.hint||{};n+=(s.wrong&&s.wrong[id])||0;Object.keys(t).forEach(k=>{if(k.startsWith(id+'_'))h+=t[k]})});return {id,w,sl,q,n,h,s:n+h*2}}),mx=Math.max(1,...R.map(r=>r.s)),top=R.reduce((a,b)=>b.s>a.s?b:a,R[0]);
@@ -109,14 +109,14 @@ function debrief(G){const R=LVL.map(([id,w,sl,q])=>{let n=0,h=0;G.forEach(g=>{co
 function fbHTML(){const A=[[0,0,0],[0,0,0]];let n=0;Object.values(D.teams||{}).forEach(t=>Object.values(t&&t.d||{}).forEach(d=>{const f=d&&d.fb;if(!f)return;n++;if([0,1,2].includes(f.like))A[0][f.like]++;if([0,1,2].includes(f.again))A[1][f.again]++}));
   return n?`<div class="fbt"><h3>Feedback from ${n} ${n===1?'device':'devices'}</h3><small>Enjoyed it: <b>${A[0][2]}</b> very much, <b>${A[0][1]}</b> OK, <b>${A[0][0]}</b> not really</small><small>Another game: <b>${A[1][2]}</b> yes, <b>${A[1][1]}</b> maybe, <b>${A[1][0]}</b> no</small></div>`:''}
 $('#dbb').onclick=()=>{DB=!DB;$('#dbb').textContent=DB?'Leaderboard':'Debrief';$('#race').style.visibility=DB?'hidden':'';$('#debrief').style.display=DB?'grid':'none';render()};
-setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow();$('#clock').textContent=fmt((end-m.startAt)/1000);render()}
+setInterval(()=>{const m=D.meta;if(m&&m.startAt){const G=groups(),end=stopAt()||(G.length&&G.every(g=>g.done)?Math.max(...G.map(g=>g.pa||0)):serverNow());$('#clock').textContent=fmt((end-m.startAt)/1000);render()}
   if(TEST&&lat.length){const a=[...lat].sort((x,y)=>x-y);$('#fl').textContent=`Test: ${a.length} updates, delay median ${a[a.length>>1]} ms, slowest ${a[a.length-1]} ms`}},500);
 $('#start').onclick=()=>{$('#start').disabled=true;fetch(url('/meta'),{method:'PATCH',body:JSON.stringify({startAt:{'.sv':'timestamp'}})})};
 $('#restart').onclick=async()=>{if(!confirm('Restart the game? Every group goes back to the opening screen. The room code and QR stay the same.'))return;$('#restart').disabled=true;const C='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=()=>C[Math.floor(Math.random()*C.length)],nx=HOME.slice(0,4).padEnd(4,'X')+r()+r();await fetch(`${BASE}/sessions/${nx}/meta.json`,{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});await fetch(home('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'},next:nx})});location.reload()};
-$('#fbb').onclick=async()=>{if(!confirm('Send the two questions to every phone now? They appear within about 10 seconds.'))return;const b=$('#fbb');await fetch(home('/clock'),{method:'PATCH',body:JSON.stringify({ask:ROOM})});b.textContent='Sent to the phones';setTimeout(()=>{b.textContent='Ask the two questions'},4000)};
+$('#fbb').onclick=async()=>{if(!confirm('Stop the game? The clock stops here and on the phones, and the two questions go to every phone within about 10 seconds.'))return;const b=$('#fbb'),p=JSON.stringify({ask:ROOM,stopAt:{'.sv':'timestamp'}});b.disabled=true;await fetch(home('/clock'),{method:'PATCH',body:p});if(ROOM!==HOME)await fetch(url('/clock'),{method:'PATCH',body:p})};
 $('#fresh').onclick=()=>{if(confirm('Open a new empty room? Use this if you need to run the game again.')){qs.set('room',newCode());location.search=qs}};
 window.__lat=()=>{const a=[...lat].sort((x,y)=>x-y);return {n:a.length,median:a[a.length>>1]||0,p95:a[Math.floor(a.length*.95)]||0,max:a[a.length-1]||0}};
-(async()=>{try{const c=await (await fetch(home('/clock'))).json();if(c&&c.next)ROOM=c.next}catch(e){}try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PUT',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}
+(async()=>{try{const c=await (await fetch(home('/clock'))).json();if(c&&c.next)ROOM=c.next}catch(e){}try{const t=Date.now(),p=await fetch(url('/clock'),{method:'PATCH',body:JSON.stringify({t:{'.sv':'timestamp'}})}),j=await p.json();if(typeof j.t==='number')offset=j.t-(t+Date.now())/2}catch(e){}
  const r=await fetch(url('/meta')),m=await r.json();if(!m)await fetch(url('/meta'),{method:'PUT',body:JSON.stringify({created:{'.sv':'timestamp'},limit:LIMIT})});
  const es=new EventSource(url(''));es.addEventListener('put',e=>apply(JSON.parse(e.data),false));es.addEventListener('patch',e=>apply(JSON.parse(e.data),true))})();
 </script>
